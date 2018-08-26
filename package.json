@@ -1,0 +1,16 @@
+{
+  "name": "t-make",
+  "version": "0.0.1",
+  "description": "take: A task runner/built tool inspired by make & jake",
+  "main": "index.js",
+  "author": "Gorea235",
+  "license": "MIT",
+  "repository": "https://github.com/Gorea235/take",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^3.0.1"
+  },
+  "scripts": {
+    "build": "rm -rf lib && tsc"
+  }
+}
