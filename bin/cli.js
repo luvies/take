@@ -18,7 +18,6 @@ async function entry() {
 
 // run app
 entry().catch(err => {
-  console.log('fired');
   if (TakeError.isTakeError(err)) {
     // if a TakeError was throw, then it was intentional
     err.log();
