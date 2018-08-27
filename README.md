@@ -1,5 +1,5 @@
 # Take - TypeScript build tool & task runner
-Take is a TypeScript-base task runner aimed at providing a solution to create Makefiles that are powerful yet need little extra config. Take is based on the following principles:
+Take is a TypeScript-based task runner aimed at providing a solution to create Makefiles that are powerful yet need little extra config. Take is based on the following principles:
 
 - Be able to be used for any project regardless of language & build setup
   - This means making sure it can be used to its fullest without needing a package.json

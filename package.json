@@ -2,15 +2,29 @@
   "name": "t-make",
   "version": "0.0.1",
   "description": "take: A task runner/built tool inspired by make & jake",
-  "main": "index.js",
+  "main": "./lib/take.js",
+  "bin": {
+    "take": "./bin/cli.js"
+  },
   "author": "Gorea235",
   "license": "MIT",
   "repository": "https://github.com/Gorea235/take",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
+    "@types/argparse": "^1.0.34",
+    "argparse": "^1.0.10",
     "typescript": "^3.0.1"
   },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.9.2",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1"
+  },
   "scripts": {
-    "build": "rm -rf lib && tsc"
+    "clean": "rm -rf lib",
+    "build": "yarn clean && tsc",
+    "test": "mocha -r ts-node/register test/**/*.spec.ts"
   }
 }

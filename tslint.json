@@ -5,7 +5,8 @@
   ],
   "linterOptions": {
     "exclude": [
-      "node_modules/**"
+      "node_modules/**",
+      "test/**"
     ]
   },
   "rules": {
@@ -28,6 +29,7 @@
       true,
       "allow-fast-null-checks"
     ],
-    "no-return-await": true
+    "no-return-await": true,
+    "no-console": false
   }
 }
