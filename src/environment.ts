@@ -1,6 +1,6 @@
 import { Namespace } from './namespace';
 import { IOptions } from './options';
-import { Utils } from './Utils';
+import { Utils } from './utils';
 
 export class Environment {
   public ns: Namespace;
