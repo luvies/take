@@ -5,7 +5,7 @@ import { Loader } from './loader';
 import { IOptions, Options } from './options';
 import { Runner } from './runner';
 import * as fsp from './shims/fsp';
-import { Task, TaskBatch, TaskConfigBatch } from './task';
+import { DefaultTaskTarget, Task, TaskBatch, TaskConfigBatch } from './task';
 import { Utils } from './utils';
 
 /**
@@ -82,6 +82,8 @@ export class Take {
 
   /**
    * Runs the given targets synchronously in order.
+   *
+   * @param targets The targets to run.
    */
   public async run(targets: TargetExecData[]): Promise<void> {
     // execute the targets against the tasks
@@ -105,19 +107,28 @@ export class Take {
       // since no option was given that would prevent target execution,
       // parse them and run them
       const targets: TargetExecData[] = [];
-      for (const targetArg of args.targets) {
-        // group 1 is the target, group 2 is the arguments
-        const match = targetArg.match(/^([^[\]]*)(?:\[([^[\]]*)\])?$/);
-        if (match) {
-          const targetArgs: string = match[2] || '';
-          targets.push({
-            target: match[1],
-            args: targetArgs.split(',')
-          });
-        } else {
-          console.error(`${targetArg} is not a valid target`);
-          return 1;
+      if (args.targets.length > 0) {
+        // if a list of targets was given, use them
+        for (const targetArg of args.targets) {
+          // group 1 is the target, group 2 is the arguments
+          const match = targetArg.match(/^([^[\]]*)(?:\[([^[\]]*)\])?$/);
+          if (match) {
+            const targetArgs: string = match[2] || '';
+            targets.push({
+              target: match[1],
+              args: targetArgs.split(',')
+            });
+          } else {
+            console.error(`${targetArg} is not a valid target`);
+            return 1;
+          }
         }
+      } else if (this.tasks[DefaultTaskTarget]) {
+        // if no target was given, and a default target exists, run it
+        targets.push({
+          target: DefaultTaskTarget,
+          args: []
+        });
       }
 
       // run Take with the given arguments

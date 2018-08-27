@@ -1,6 +1,8 @@
 import { Environment } from './environment';
 import { UserError } from './errors/user-error';
 
+export const DefaultTaskTarget = 'default';
+
 /**
  * A batch of task configs.
  */

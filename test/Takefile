@@ -50,6 +50,11 @@ module.exports = (take) => {
       execute() {
         console.log(take);
       }
+    },
+    default: {
+      execute() {
+        console.log('default task');
+      }
     }
   };
 };
