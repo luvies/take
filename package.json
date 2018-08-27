@@ -1,5 +1,5 @@
 {
-  "name": "t-make",
+  "name": "@gorea235/take",
   "version": "0.0.1",
   "description": "take: A task runner/built tool inspired by make & jake",
   "main": "./lib/take.js",
@@ -26,5 +26,14 @@
     "clean": "rm -rf lib",
     "build": "yarn clean && tsc",
     "test": "mocha -r ts-node/register test/**/*.spec.ts"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "make",
+    "typescript",
+    "take",
+    "jake"
+  ]
 }
