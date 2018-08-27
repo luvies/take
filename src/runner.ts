@@ -1,5 +1,5 @@
 import { Environment } from './environment';
-import { UserError } from './errors/user-error';
+import { TakeError } from './take-error';
 import { Task, TaskBatch } from './task';
 
 interface DependencyNode {
@@ -93,9 +93,10 @@ export class Runner {
         if (!foundTargets[dep]) {
           // make sure we don't loop
           if (path.indexOf(dep) >= 0) {
+            path.push(target);
             path.push(dep);
-            throw new UserError(
-              `cyclic target dependency detected, aborting (dependency path: ${path.join(' -> ')})`
+            throw new TakeError(
+              `Cyclic target dependency detected, aborting (dependency path: ${path.join(' -> ')})`
             );
           } else {
             // since the dependency hasn't been encountered before, and we are in a valid state,
@@ -131,7 +132,7 @@ export class Runner {
       }
     }
     if (!ctask) {
-      throw new UserError(`unable to find target ${target}`);
+      throw new TakeError(`Unable to find target ${target}`);
     }
     return ctask;
   }

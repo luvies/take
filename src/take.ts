@@ -132,7 +132,7 @@ export class Take {
       }
 
       // run Take with the given arguments
-      this.run(targets);
+      await this.run(targets);
     }
 
     // if we get here, it means execution went well, so set the exit code to 0

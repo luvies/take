@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import { Environment } from './environment';
-import { RunError } from './errors/run-error';
 import { IShellOptions } from './options';
+import { TakeError } from './take-error';
 
 // since this class is purely for mixing into the TakefileEnv object,
 // the private members are all prefixed with `__` to reduce the pollution
@@ -92,7 +92,7 @@ export class Utils {
           if (code === 0) {
             resolve(code);
           } else {
-            reject(new RunError(`process exited with code ${code}`, code));
+            reject(new TakeError('Target execution aborted: process exited with code', code));
           }
         } else {
           // otherwise just resolve regardless

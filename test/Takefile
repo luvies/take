@@ -55,6 +55,18 @@ module.exports = (take) => {
       execute() {
         console.log('default task');
       }
+    },
+    target7: {
+      deps: 'target8',
+      execute() {
+        console.log(this.desc);
+      }
+    },
+    target8: {
+      deps: 'target7',
+      execute() {
+        console.log(this.desc);
+      }
     }
   };
 };

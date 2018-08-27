@@ -1,5 +1,5 @@
 import { Environment } from './environment';
-import { UserError } from './errors/user-error';
+import { TakeError } from './take-error';
 
 export const DefaultTaskTarget = 'default';
 
@@ -83,7 +83,7 @@ export class Task {
   ) {
     // if the task name has the namespace separator in, error, since it's not allowed
     if (name.indexOf(env.options.namespaceSeparator) >= 0) {
-      throw new UserError('task name cannot have the namespace separator in');
+      throw new TakeError('Task name cannot have the namespace separator in');
     }
 
     // convert the given deps config into an array

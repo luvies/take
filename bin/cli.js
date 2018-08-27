@@ -1,17 +1,30 @@
 #! /usr/bin/env node
 
-// load in the Take class
+'use strict';
+
+// load in take
 const {
-  Take
-} = require('../lib/take');
+  Take,
+  TakeError
+} = require('../lib');
 
 async function entry() {
   // create a new Take instance
-  take = await Take.newInstance();
+  const take = await Take.newInstance();
 
   // run Take
-  process.exitCode = await take.cli()
+  process.exitCode = await take.cli();
 }
 
 // run app
-entry();
+entry().catch(err => {
+  console.log('fired');
+  if (TakeError.isTakeError(err)) {
+    // if a TakeError was throw, then it was intentional
+    err.log();
+    process.exitCode = 1;
+  } else {
+    console.error('Unhandled exception, execution aborted');
+    console.error(err);
+  }
+});

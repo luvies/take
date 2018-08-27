@@ -2,6 +2,7 @@ import { join } from 'path';
 import { Environment } from './environment';
 import * as fsp from './shims/fsp';
 import { TakefileEnv } from './take';
+import { TakeError } from './take-error';
 import { TaskConfigBatch } from './task';
 
 export class Loader {
@@ -17,7 +18,7 @@ export class Loader {
 
     // make sure we found it
     if (!fpath) {
-      throw new Error('unable to locate Takefile');
+      throw new TakeError('Unable to locate Takefile');
     }
 
     // create the loader and return it
@@ -29,7 +30,7 @@ export class Loader {
     try {
       await fsp.access(file, fsp.constants.F_OK);
     } catch (err) {
-      throw new Error('given Takefile does not exist');
+      throw new TakeError('Given Takefile does not exist');
     }
 
     // create new loader and return it
