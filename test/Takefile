@@ -1,0 +1,55 @@
+module.exports = (take) => {
+  return {
+    target1: {
+      desc: 'target 1',
+      async execute() {
+        console.log(this.desc, arguments);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(this.desc, 'timeout');
+      }
+    },
+    target2: {
+      desc: 'target 2',
+      deps: 'target1',
+      async execute() {
+        console.log(this.desc);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(this.desc, 'timeout');
+      }
+    },
+    target3: {
+      desc: 'target 3',
+      deps: ['target1', 'target2'],
+      execute() {
+        console.log(this.desc);
+      }
+    },
+    target4: {
+      desc: 'target 4',
+      deps: ['target1', 'target2'],
+      parallelDeps: true,
+      execute() {
+        console.log(this.desc);
+      }
+    },
+    target5: {
+      desc: 'target 5',
+      execute() {
+        console.log(this.desc);
+      },
+      children: {
+        child1: {
+          desc: 'target 5 child 1',
+          execute() {
+            console.log(this.desc, this);
+          }
+        }
+      }
+    },
+    target6: {
+      execute() {
+        console.log(take);
+      }
+    }
+  };
+};
