@@ -1,6 +1,6 @@
 {
   "name": "@gorea235/take",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "take: A task runner/built tool inspired by make & jake",
   "main": "./lib/take.js",
   "bin": {
