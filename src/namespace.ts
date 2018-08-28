@@ -45,4 +45,20 @@ export class Namespace {
     }
     return spl;
   }
+
+  /**
+   * Extracts the full namespace and arguments from a target string.
+   * If the extraction failed, then it will return undefined.
+   *
+   * @param target The full target string to extract from.
+   * @returns The tuple of namespace and argument list, or undefined if parse failed.
+   */
+  public extractArgs(target: string): [string, string[]] | undefined {
+    const match = target.match(/^([^[\]]*)(?:\[([^[\]]*)\])?$/);
+    if (match) {
+      return [match[1], match[2] ? match[2].split(',') : []];
+    } else {
+      console.error(`${target} is not a valid target`);
+    }
+  }
 }

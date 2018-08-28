@@ -5,10 +5,9 @@ module.exports = (take) => {
   take.options.shell.printStderr = true;
 
   return {
-    default: { deps: 'build' },
+    default: { deps: ['clean', 'build'] },
     build: {
       desc: 'Builds Take',
-      deps: 'clean',
       async execute() {
         await take.execo('tsc');
       }
@@ -38,7 +37,7 @@ module.exports = (take) => {
     publish: {
       desc: 'Publishes Take to npm',
       deps: [
-        'build', 'test'
+        'default', 'test'
       ],
       async execute() {
         await take.execo('yarn', 'publish');

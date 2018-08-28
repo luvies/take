@@ -30,14 +30,6 @@ export type TakefileEnv = Utils & {
 };
 
 /**
- * A single target and the arguments to pass to it.
- */
-export interface TargetExecData {
-  target: string;
-  args: string[];
-}
-
-/**
  * The main application class.
  */
 export class Take {
@@ -88,10 +80,10 @@ export class Take {
    *
    * @param targets The targets to run.
    */
-  public async run(targets: TargetExecData[]): Promise<void> {
+  public async run(targets: string[]): Promise<void> {
     // execute the targets against the tasks
     for (const target of targets) {
-      await this.runner.execute(target.target, target.args);
+      await this.runner.execute(target);
     }
   }
 
@@ -107,31 +99,13 @@ export class Take {
     if (args.listTargets) {
       console.log(this.tasks); // just dump the tasks for now
     } else {
-      // since no option was given that would prevent target execution,
-      // parse them and run them
-      const targets: TargetExecData[] = [];
-      if (args.targets.length > 0) {
-        // if a list of targets was given, use them
-        for (const targetArg of args.targets) {
-          // group 1 is the target, group 2 is the arguments
-          const match = targetArg.match(/^([^[\]]*)(?:\[([^[\]]*)\])?$/);
-          if (match) {
-            const targetArgs: string = match[2] || '';
-            targets.push({
-              target: match[1],
-              args: targetArgs.split(',')
-            });
-          } else {
-            console.error(`${targetArg} is not a valid target`);
-            return 1;
-          }
-        }
-      } else if (this.tasks[DefaultTaskTarget]) {
-        // if no target was given, and a default target exists, run it
-        targets.push({
-          target: DefaultTaskTarget,
-          args: []
-        });
+      // since no option was given that would prevent target execution, run them
+      const targets: string[] = args.targets;
+
+      // if no target was given, attempt to run the default target
+      // if it doesn't exist, then the user has likely done something wrong
+      if (args.targets.length === 0) {
+        targets.push(DefaultTaskTarget);
       }
 
       // run Take with the given arguments

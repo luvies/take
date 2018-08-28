@@ -5,6 +5,7 @@ import { Task, TaskBatch } from './task';
 interface DependencyNode {
   target: string;
   task: Task;
+  args: string[];
   leaves: DependencyNode[];
 }
 
@@ -17,12 +18,12 @@ export class Runner {
   /**
    * Executes a target against the current task object with optional argument.
    */
-  public async execute(target: string, args: string[]): Promise<void> {
+  public async execute(target: string): Promise<void> {
     // build dependency tree
     const tree = this.buildDependencyTree(target);
 
     // execute tree
-    await this.execNode(tree, args);
+    await this.execNode(tree);
   }
 
   /**
@@ -33,7 +34,7 @@ export class Runner {
    * @param node The node to execute.
    * @param args The argument to pass to the node's target.
    */
-  private async execNode(node: DependencyNode, args?: string[]): Promise<void> {
+  private async execNode(node: DependencyNode): Promise<void> {
     // if we have any leaves, execute them according to the task config
     if (node.leaves) {
       if (node.task.parallelDeps) {
@@ -54,7 +55,7 @@ export class Runner {
     }
 
     // now the dependencies are done, execute the node itself
-    await node.task.execute(args);
+    await node.task.execute(node.args);
   }
 
   /**
@@ -80,9 +81,11 @@ export class Runner {
     }
 
     // current node
+    const [task, args] = this.getTask(target);
     const node: DependencyNode = {
       target,
-      task: this.getTask(target),
+      task,
+      args,
       leaves: []
     };
 
@@ -116,12 +119,17 @@ export class Runner {
    * Converts the target string into the resolved task.
    *
    * @param target The target to search for.
-   * @returns The resolved task.
+   * @returns The resolved task and its arguments.
    */
-  private getTask(target: string): Task {
+  private getTask(target: string): [Task, string[]] {
     let ctask: Task | undefined;
     let tasks = this.tasks;
-    const nss = this.env.ns.split(target);
+    const extract = this.env.ns.extractArgs(target);
+    if (!extract) {
+      throw new TakeError(`${target} is not a valid target`);
+    }
+    const [name, args] = extract;
+    const nss = this.env.ns.split(name);
     for (const cns of nss) {
       if (tasks[cns]) {
         ctask = tasks[cns];
@@ -134,6 +142,6 @@ export class Runner {
     if (!ctask) {
       throw new TakeError(`Unable to find target ${target}`);
     }
-    return ctask;
+    return [ctask, args];
   }
 }

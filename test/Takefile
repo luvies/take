@@ -72,11 +72,15 @@ module.exports = (take) => {
       }
     },
     echo: {
-      async execute() {
+      async execute(...args) {
         await take.shell('echo test 1', { spawn: { shell: true } });
         await take.execo('echo test 2');
         await take.shell('echo test', ['3'], { spawn: { shell: true } });
+        console.log(args);
       }
+    },
+    echo2: {
+      deps: 'echo[test,dep]'
     }
   };
 };
