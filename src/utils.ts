@@ -10,6 +10,10 @@ import { TakeError } from './take-error';
  * Provides various utilities that Takefiles can make use of.
  */
 export class Utils {
+  public static copy(old: Utils): Utils {
+    return new Utils(old.__env);
+  }
+
   public constructor(
     // tslint:disable-next-line:variable-name
     private __env: Environment

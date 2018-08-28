@@ -60,11 +60,14 @@ export class Take {
   }
 
   private static createTakefileEnv(env: Environment): TakefileEnv {
-    return Object.assign({
-      options: env.options as IOptions,
-      fsp,
-      module: TakeModule
-    }, env.utils); // mixin utils
+    // make a copy of the utils object so we don't alter the current one
+    return Object.assign(Utils.copy(env.utils),
+      {
+        options: env.options,
+        fsp,
+        module: TakeModule
+      }
+    );
   }
 
   private constructor(
