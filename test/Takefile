@@ -1,4 +1,7 @@
 module.exports = (take) => {
+  take.options.shell.printStdout = true;
+  take.options.shell.printStderr = true;
+
   return {
     target1: {
       desc: 'target 1',
@@ -66,6 +69,13 @@ module.exports = (take) => {
       deps: 'target7',
       execute() {
         console.log(this.desc);
+      }
+    },
+    echo: {
+      async execute() {
+        await take.shell('echo test 1', { spawn: { shell: true } });
+        await take.execo('echo test 2');
+        await take.shell('echo test', ['3'], { spawn: { shell: true } });
       }
     }
   };

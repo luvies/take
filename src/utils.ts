@@ -58,7 +58,7 @@ export class Utils {
     // if the opts argument was passed in second, reorganise parameters
     if (!Array.isArray(args)) {
       opts = args;
-      args = undefined;
+      args = [];
     }
 
     // build options object
@@ -67,23 +67,24 @@ export class Utils {
       // overwrite base options if others were given
       Object.assign(copts, opts);
     }
+    const spawnOpts = copts.spawn || {}; // spawn options
 
     // setup stdio
-    copts.stdio = [
-      process.stdin
+    spawnOpts.stdio = [
+      'inherit'
     ];
-    if (!copts.stdio[1]) { // only set it if we weren't given it
+    if (!spawnOpts.stdio[1]) { // only set it if we weren't given it
       if (this.__env.options.shell.printStdout) {
-        (copts.stdio as any[])[1] = process.stdout;
+        (spawnOpts.stdio as any[])[1] = 'inherit';
       } else {
-        (copts.stdio as any[])[1] = 'pipe';
+        (spawnOpts.stdio as any[])[1] = 'pipe';
       }
     }
-    if (!copts.stdio[2]) { // only set it if we weren't given it
+    if (!spawnOpts.stdio[2]) { // only set it if we weren't given it
       if (this.__env.options.shell.printStderr) {
-        (copts.stdio as any[])[2] = process.stderr;
+        (spawnOpts.stdio as any[])[2] = 'inherit';
       } else {
-        (copts.stdio as any[])[2] = 'pipe';
+        (spawnOpts.stdio as any[])[2] = 'pipe';
       }
     }
 
@@ -93,7 +94,7 @@ export class Utils {
       const fmtargs = args ? ` ${args.map(arg => `'${arg.replace('\'', '\\\'')}'`).join(' ')}` : '';
       console.log(`${copts.echoPrefix}${cmd}${fmtargs}${copts.echoSuffix}`);
     }
-    const proc = spawn(cmd, args, copts);
+    const proc = spawn(cmd, args, spawnOpts);
     return new Promise<number>((resolve, reject) => {
       proc.on('exit', code => {
         // if we abort on error code, then reject non 0 codes

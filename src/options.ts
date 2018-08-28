@@ -36,10 +36,16 @@ const DefaultShellOptions = {
    * Whether to print the command's stderr to the console.
    * @default false
    */
-  printStderr: false
+  printStderr: false,
+  /**
+   * The default options to pass into spawn.
+   */
+  spawn: {
+    shell: true
+  } as SpawnOptions
 };
 
-export type IShellOptions = SpawnOptions & typeof DefaultShellOptions;
+export type IShellOptions = typeof DefaultShellOptions;
 
 /**
  * The spec for the options object.
