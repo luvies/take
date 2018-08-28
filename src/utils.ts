@@ -88,7 +88,12 @@ export class Utils {
     }
 
     // launch and setup process
-    const proc = spawn(cmd, args, opts);
+    if (copts.echo) {
+      // if we are echoing to console, do that now
+      const fmtargs = args ? ` ${args.map(arg => `'${arg.replace('\'', '\\\'')}'`).join(' ')}` : '';
+      console.log(`${copts.echoPrefix}${cmd}${fmtargs}${copts.echoSuffix}`);
+    }
+    const proc = spawn(cmd, args, copts);
     return new Promise<number>((resolve, reject) => {
       proc.on('exit', code => {
         // if we abort on error code, then reject non 0 codes
@@ -102,6 +107,10 @@ export class Utils {
           // otherwise just resolve regardless
           resolve(code);
         }
+      });
+
+      proc.on('error', err => {
+        reject(err);
       });
     });
   }

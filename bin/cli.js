@@ -24,6 +24,6 @@ entry().catch(err => {
     process.exitCode = 1;
   } else {
     console.error('Unhandled exception, execution aborted');
-    console.error(err);
+    console.error(err.stack || err);
   }
 });
