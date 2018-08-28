@@ -1,3 +1,5 @@
+const { join } = require('path');
+
 module.exports = (take) => {
   take.options.shell.printStdout = true;
   take.options.shell.printStderr = true;
@@ -22,6 +24,15 @@ module.exports = (take) => {
       deps: 'build',
       async execute() {
         await take.execo('./node_modules/mocha/bin/mocha', '-r', 'ts-node/register', 'test/**/*.spec.ts');
+      },
+      children: {
+        'run-local': {
+          deps: 'build',
+          async execute(...args) {
+            console.log('--- execution output ---');
+            await take.shell('node', ['../bin/cli.js', ...args], { cwd: join(__dirname, './test') });
+          }
+        }
       }
     },
     publish: {
@@ -31,6 +42,7 @@ module.exports = (take) => {
       ],
       async execute() {
         await take.execo('yarn', 'publish');
+        await take.execo('git', 'push', 'origin', '--tags');
       }
     }
   };
