@@ -1,14 +1,14 @@
 {
-  "name": "@gorea235/take",
-  "version": "0.0.3",
+  "name": "@luvies/take",
+  "version": "0.0.1",
   "description": "take: A task runner/built tool inspired by make & jake",
   "main": "./lib/take.js",
   "bin": {
     "take": "./bin/cli.js"
   },
-  "author": "Gorea235",
+  "author": "luvies",
   "license": "MIT",
-  "repository": "https://github.com/Gorea235/take",
+  "repository": "https://github.com/luvies/take",
   "dependencies": {
     "@types/argparse": "^1.0.34",
     "argparse": "^1.0.10",
