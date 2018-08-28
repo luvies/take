@@ -1,6 +1,6 @@
 {
   "name": "@luvies/take",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "take: A task runner/built tool inspired by make & jake",
   "main": "./lib/take.js",
   "bin": {
