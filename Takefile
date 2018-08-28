@@ -1,0 +1,37 @@
+module.exports = (take) => {
+  take.options.shell.printStdout = true;
+  take.options.shell.printStderr = true;
+
+  return {
+    default: { deps: 'build' },
+    build: {
+      desc: 'Builds Take',
+      deps: 'clean',
+      async execute() {
+        await take.execo('tsc');
+      }
+    },
+    clean: {
+      desc: 'Cleans up build output',
+      async execute() {
+        await take.execo('rm', '-rf', './lib');
+      }
+    },
+    test: {
+      desc: 'Tests Take',
+      deps: 'build',
+      async execute() {
+        await take.execo('./node_modules/mocha/bin/mocha', '-r', 'ts-node/register', 'test/**/*.spec.ts');
+      }
+    },
+    publish: {
+      desc: 'Publishes Take to npm',
+      deps: [
+        'build', 'test'
+      ],
+      async execute() {
+        await take.execo('yarn', 'publish');
+      }
+    }
+  };
+};
