@@ -20,8 +20,8 @@ module.exports = (take) => {
     },
     test: {
       desc: 'Tests Take',
-      deps: 'build',
       async execute() {
+        // use ts-node to allow proper source mapping and not require building
         await take.execo('./node_modules/mocha/bin/mocha', '-r', 'ts-node/register', 'test/**/*.spec.ts');
       },
       children: {

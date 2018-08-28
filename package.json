@@ -10,11 +10,11 @@
   "license": "MIT",
   "repository": "https://github.com/luvies/take",
   "dependencies": {
-    "@types/argparse": "^1.0.34",
     "argparse": "^1.0.10",
     "typescript": "^3.0.1"
   },
   "devDependencies": {
+    "@types/argparse": "^1.0.34",
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.9.2",

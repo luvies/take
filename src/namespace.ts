@@ -56,9 +56,7 @@ export class Namespace {
   public extractArgs(target: string): [string, string[]] | undefined {
     const match = target.match(/^([^[\]]*)(?:\[([^[\]]*)\])?$/);
     if (match) {
-      return [match[1], match[2] ? match[2].split(',') : []];
-    } else {
-      console.error(`${target} is not a valid target`);
+      return [match[1], typeof match[2] !== 'undefined' ? match[2].split(',') : []];
     }
   }
 }
