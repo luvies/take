@@ -100,14 +100,12 @@ export class Task {
     // ignore if this is in the root namespace
     if (containingNamespace && config.depParent) {
       this.deps.unshift(containingNamespace);
-    } else {
-      containingNamespace = '';
     }
 
     // build the children tasks
     this.children = {};
     if (config.children) {
-      const fullName: string = env.ns.join(containingNamespace, name);
+      const fullName: string = containingNamespace ? env.ns.join(containingNamespace, name) : name;
       for (const child in config.children) {
         if (config.children.hasOwnProperty) {
           this.children[child] = new Task(child, config.children[child], env, fullName);

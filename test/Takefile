@@ -78,6 +78,11 @@ module.exports = (take) => {
         await take.execo('echo test 2');
         await take.shell('echo test', ['3'], { spawn: { shell: true } });
         console.log(args);
+      },
+      children: {
+        test: {
+          depParent: true
+        }
       }
     },
     echo2: {
