@@ -53,7 +53,7 @@ export class Take {
 
   private static createTakefileEnv(env: Environment): TakefileEnv {
     // make a copy of the utils object so we don't alter the current one
-    return Object.assign(Utils.copy(env.utils),
+    return Object.assign(new Utils(env),
       {
         options: env.options,
         fsp,

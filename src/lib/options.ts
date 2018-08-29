@@ -1,4 +1,5 @@
 import { SpawnOptions } from 'child_process';
+import merge from 'deepmerge';
 
 /**
  * The default shell options object.
@@ -78,6 +79,6 @@ export interface IOptions {
 export function Options(): IOptions {
   return {
     namespaceSeparator: ':',
-    shell: Object.assign({}, DefaultShellOptions)
+    shell: merge({}, DefaultShellOptions)
   };
 }

@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import merge from 'deepmerge';
 import { Environment } from './environment';
 import { IShellOptions } from './options';
 import { TakeError } from './take-error';
@@ -10,10 +11,6 @@ import { TakeError } from './take-error';
  * Provides various utilities that Takefiles can make use of.
  */
 export class Utils {
-  public static copy(old: Utils): Utils {
-    return new Utils(old.__env);
-  }
-
   public constructor(
     // tslint:disable-next-line:variable-name
     private __env: Environment
@@ -61,12 +58,8 @@ export class Utils {
       args = [];
     }
 
-    // build options object
-    const copts = Object.assign({}, this.__env.options.shell); // make a copy so future assigns don't affect it
-    if (opts) {
-      // overwrite base options if others were given
-      Object.assign(copts, opts);
-    }
+    // merge global options with given options
+    const copts = merge(this.__env.options.shell, opts || {});
     const spawnOpts = copts.spawn || {}; // spawn options
 
     // setup stdio

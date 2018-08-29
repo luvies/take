@@ -1,6 +1,7 @@
 module.exports = (take) => {
   take.options.shell.printStdout = true;
   take.options.shell.printStderr = true;
+  take.options.shell.echo = true;
 
   return {
     target1: {
@@ -73,7 +74,7 @@ module.exports = (take) => {
     },
     echo: {
       async execute(...args) {
-        await take.shell('echo test 1', { spawn: { shell: true } });
+        await take.shell('echo test 1');
         await take.execo('echo test 2');
         await take.shell('echo test', ['3'], { spawn: { shell: true } });
         console.log(args);
