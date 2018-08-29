@@ -9,7 +9,7 @@ export class Loader {
   public static async fromDir(dir: string, env: Environment): Promise<Loader> {
     // search for Takefile
     let fpath;
-    for (const item of await fsp.readdir(process.cwd())) {
+    for (const item of await fsp.readdir(dir)) {
       if (item.match(/Takefile(\.js)?$/i)) {
         fpath = item;
         break;
