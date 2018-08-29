@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Environment } from '../src/environment';
-import { Namespace } from '../src/namespace';
-import { Options } from '../src/options';
+import { Environment } from '../src/lib/environment';
+import { Namespace } from '../src/lib/namespace';
+import { Options } from '../src/lib/options';
 
 describe('Environment', function(this) {
   it('should construct with the correct properties', function(this) {

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Namespace } from '../src/namespace';
-import { IOptions, Options } from '../src/options';
+import { Namespace } from '../src/lib/namespace';
+import { IOptions, Options } from '../src/lib/options';
 
 describe('Namespace', function(this) {
   let opts: IOptions;

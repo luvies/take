@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { TakeError } from '../src/take-error';
+import { TakeError } from '../src/lib/take-error';
 
 describe('TakeError', function(this) {
   describe('#isTakeError', function(this) {

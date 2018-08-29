@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Environment } from '../src/environment';
-import { Options } from '../src/options';
-import { Runner } from '../src/runner';
-import { Task, TaskBatch } from '../src/task';
+import { Environment } from '../src/lib/environment';
+import { Options } from '../src/lib/options';
+import { Runner } from '../src/lib/runner';
+import { Task, TaskBatch } from '../src/lib/task';
 
 describe('Runner', function(this) {
   // instance variables
@@ -48,7 +48,7 @@ describe('Runner', function(this) {
   }
 
   function exec(namespace: number[], args: string[] = []) {
-    runner.execute(env.ns.join(...namespace.map(tgt => tgts[tgt])), args);
+    runner.execute(env.ns.join(...namespace.map(tgt => tgts[tgt])));
   }
 
   // helper variables

@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Environment } from '../src/environment';
-import { Options } from '../src/options';
-import { Task } from '../src/task';
+import { Environment } from '../src/lib/environment';
+import { Options } from '../src/lib/options';
+import { Task } from '../src/lib/task';
 
 describe('Task', function(this) {
   let env: Environment;
