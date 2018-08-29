@@ -73,4 +73,5 @@ typings/
 .serverless
 
 # build output
-lib/
+/bin
+/lib

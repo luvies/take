@@ -15,7 +15,7 @@ module.exports = (take) => {
     clean: {
       desc: 'Cleans up build output',
       async execute() {
-        await take.execo('rm', '-rf', './lib');
+        await take.execo('rm', '-rf', 'lib', 'bin');
       }
     },
     test: {
@@ -26,10 +26,17 @@ module.exports = (take) => {
       },
       children: {
         'run-local': {
-          deps: 'build',
           async execute(...args) {
             console.log('--- execution output ---');
-            await take.shell('node', ['../bin/cli.js', ...args], { cwd: join(__dirname, './test') });
+            await take.shell(
+              'ts-node',
+              [
+                '-P', '../tsconfig.json',
+                '-O', '{ "declarationMap": false }',
+                '../src/bin/cli.ts', ...args
+              ],
+              { spawn: { cwd: join(__dirname, './test') } }
+            );
           }
         }
       }
