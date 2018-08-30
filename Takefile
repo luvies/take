@@ -15,7 +15,7 @@ module.exports = (take) => {
     clean: {
       desc: 'Cleans up build output',
       async execute() {
-        await take.execo('rm', '-rf', 'lib', 'bin');
+        await take.execo('rm', '-rf', 'dist');
       }
     },
     test: {
