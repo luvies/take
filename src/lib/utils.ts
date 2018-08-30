@@ -115,7 +115,7 @@ export class Utils {
   private async __exec(cmd: string[], echo?: boolean): Promise<number> {
     if (cmd.length) {
       // if we were given the base command, run it
-      return this.shell(cmd[0], cmd.slice(1), { echo });
+      return this.shell(cmd[0], cmd.slice(1), typeof echo !== 'undefined' ? { echo } : undefined);
     } else {
       // if nothing was given, act as a noop
       return 0;

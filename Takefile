@@ -35,7 +35,7 @@ module.exports = (take) => {
                 '-O', '{ "declarationMap": false }',
                 '../src/bin/cli.ts', ...args
               ],
-              { spawn: { cwd: join(__dirname, './test') } }
+              { spawn: { cwd: join(__dirname, './test'), shell: false } }
             );
           }
         }

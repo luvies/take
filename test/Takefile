@@ -87,6 +87,18 @@ module.exports = (take) => {
     },
     echo2: {
       deps: 'echo[test,dep]'
+    },
+    'echo-test': {
+      async execute() {
+        take.options.shell.echo = true;
+        await take.exec('echo', 'exec echo=true');
+        await take.execo('echo', 'execo echo=true');
+        await take.execs('echo', 'execs echo=true');
+        take.options.shell.echo = false;
+        await take.exec('echo', 'exec echo=false');
+        await take.execo('echo', 'execo echo=false');
+        await take.execs('echo', 'execs echo=false');
+      }
     }
   };
 };
