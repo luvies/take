@@ -1,7 +1,7 @@
 {
   "name": "@luvies/take",
   "version": "0.0.5",
-  "description": "take: A task runner/built tool inspired by make & jake",
+  "description": "take: A task runner/build tool inspired by make & jake",
   "main": "./dist/lib/take.js",
   "bin": {
     "take": "./dist/bin/cli.js"
