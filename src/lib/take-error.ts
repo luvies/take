@@ -7,7 +7,7 @@ export class TakeError extends Error {
    * Returns whether the given variable is an instance of UserError.
    */
   public static isTakeError(error: any): error is TakeError {
-    return typeof error === 'object' && error.name === TakeError.name;
+    return error instanceof TakeError;
   }
 
   public name: string = TakeError.name;
