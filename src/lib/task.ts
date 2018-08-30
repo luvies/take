@@ -134,12 +134,9 @@ export class Task {
    */
   public async execute(args: string[] = []): Promise<void> {
     if (this.config.execute) {
-      const result = this.config.execute(...args);
-      // check if the executor returned anything
-      // if it did, make sure it's awaitable, and then await it
-      if (result && result.then) {
-        await result;
-      }
+      // await regardless, since void results can be awaited
+      // (they just return immediately)
+      await this.config.execute(...args);
     }
   }
 }

@@ -42,8 +42,8 @@ export class Take {
 
     // load Takefile
     const loader: Loader = await (fromDir ? Loader.fromDir(path, env) : Loader.fromFile(path, env));
-    const builder = await loader.getConfigBuilder();
-    const taskConf: TaskConfigBatch = builder(Take.createTakefileEnv(env));
+    const tfEnv = Take.createTakefileEnv(env);
+    const taskConf: TaskConfigBatch = await loader.loadConfig(tfEnv);
     const tasks: TaskBatch = Task.processTaskConfig(taskConf, env);
     const runner = new Runner(env, tasks);
 

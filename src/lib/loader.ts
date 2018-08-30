@@ -42,12 +42,15 @@ export class Loader {
     private env: Environment
   ) { }
 
-  public async getConfigBuilder(): Promise<(take: TakefileEnv) => TaskConfigBatch> {
+  public async loadConfig(tfEnv: TakefileEnv): Promise<TaskConfigBatch> {
     // since we're not doing anything fancy yet, just require it normally
-    // this function is async since it will be reading and processing later on
     const takefile = require(this.path);
-    // since typescript uses 'default' for exporting by default,
-    // check it first
-    return takefile.default || takefile;
+
+    // since typescript uses 'default' for exporting by default, check it first
+    const builder: (take: TakefileEnv) => TaskConfigBatch | Promise<TaskConfigBatch>
+      = takefile.default || takefile;
+
+    // return the builder regardless, since this function can be awaited on
+    return builder(tfEnv);
   }
 }

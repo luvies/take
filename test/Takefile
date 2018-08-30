@@ -1,7 +1,9 @@
-module.exports = (take) => {
+module.exports = async (take) => {
   take.options.shell.printStdout = true;
   take.options.shell.printStderr = true;
   take.options.shell.echo = true;
+
+  await take.exec('echo init');
 
   return {
     target1: {
