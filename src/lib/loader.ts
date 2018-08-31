@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { Environment } from './environment';
 import * as fsp from './shims/fsp';
 import { TakefileEnv } from './take';
@@ -44,7 +44,7 @@ export class Loader {
 
   public async loadConfig(tfEnv: TakefileEnv): Promise<TaskConfigBatch> {
     // since we're not doing anything fancy yet, just require it normally
-    const takefile = require(this.path);
+    const takefile = require(resolve(this.path));
 
     // since typescript uses 'default' for exporting by default, check it first
     const builder: (take: TakefileEnv) => TaskConfigBatch | Promise<TaskConfigBatch>

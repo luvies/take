@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import merge from 'deepmerge';
+import { SuppressOptions } from './arguments';
 import { Environment } from './environment';
 import { IShellOptions } from './options';
 import { TakeError } from './take-error';
@@ -63,31 +64,38 @@ export class Utils {
     const spawnOpts = copts.spawn || {}; // spawn options
 
     // setup stdio
+    // we override any options given since we need to tap into it
     spawnOpts.stdio = [
-      'inherit'
+      'inherit',
+      'pipe',
+      'pipe'
     ];
-    if (!spawnOpts.stdio[1]) { // only set it if we weren't given it
-      if (this.__env.options.shell.printStdout) {
-        (spawnOpts.stdio as any[])[1] = 'inherit';
-      } else {
-        (spawnOpts.stdio as any[])[1] = 'pipe';
-      }
-    }
-    if (!spawnOpts.stdio[2]) { // only set it if we weren't given it
-      if (this.__env.options.shell.printStderr) {
-        (spawnOpts.stdio as any[])[2] = 'inherit';
-      } else {
-        (spawnOpts.stdio as any[])[2] = 'pipe';
-      }
-    }
 
     // launch and setup process
-    if (copts.echo) {
+    if (!this.__env.config.suppress.includes(SuppressOptions.Echo) && copts.echo) {
       // if we are echoing to console, do that now
       const fmtargs = args ? ` ${args.map(arg => `'${arg.replace('\'', '\\\'')}'`).join(' ')}` : '';
       console.log(`${copts.echoPrefix}${cmd}${fmtargs}${copts.echoSuffix}`);
     }
     const proc = spawn(cmd, args, spawnOpts);
+
+    // set up stdout if we were configured to
+    if (
+      !this.__env.config.suppress.includes(SuppressOptions.CmdStdout) &&
+      copts.printStdout
+    ) {
+      proc.stdout.on('data', (chunk: Buffer) => this.__handlePipeData(process.stdout, chunk));
+    }
+
+    // set up stderr if we were configured to
+    if (
+      !this.__env.config.suppress.includes(SuppressOptions.CmdStderr) &&
+      copts.printStderr
+    ) {
+      proc.stderr.on('data', (chunk: Buffer) => this.__handlePipeData(process.stderr, chunk));
+    }
+
+    // set up exit/error events on child process in a containing promise and return it
     return new Promise<number>((resolve, reject) => {
       proc.on('exit', code => {
         // if we abort on error code, then reject non 0 codes
@@ -120,5 +128,10 @@ export class Utils {
       // if nothing was given, act as a noop
       return 0;
     }
+  }
+
+  private __handlePipeData(stream: NodeJS.WriteStream, data: Buffer) {
+    // for now just pass thru the data
+    stream.write(data.toString());
   }
 }

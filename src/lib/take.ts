@@ -33,12 +33,80 @@ export type TakefileEnv = Utils & {
  * The main application class.
  */
 export class Take {
-  public static async newInstance(path?: string, fromDir: boolean = true): Promise<Take> {
+  /**
+   * Creates a Take instance using the command line arguments.
+   */
+  public static async runFromCli(): Promise<void> {
+    // setup the cli global to allow the cli to check options
+    // using the global so if errors occur before this function returns,
+    // we could still apply some of the options
+    (global as any).takecli = {};
+
+    // load arguments
+    const args: ICliArgs = await processArgs();
+
+    // process some arguments before creating a Take instance
+    if (args.trace) {
+      // if trace was passed, enable tracing
+      (global as any).takecli.trace = true;
+    }
+    if (args.cwd) {
+      process.chdir(args.cwd);
+    }
+
+    // get given path and whether we're using a directory or not
+    let path: string | undefined;
+    let fromDir: boolean | undefined;
+    if (args.file) { // file takes priority
+      path = args.file;
+      fromDir = false;
+    } else if (args.directory) {
+      path = args.directory;
+      fromDir = true;
+    }
+
+    // create a new Take instance
+    const instance = await Take.newInstance(
+      path, fromDir,
+      (env) => {
+        // apply cli arguments to config
+        env.config.suppress = args.suppress;
+
+        return env;
+      }
+    );
+
+    // check meta options before trying to execute tasks
+    if (args.listTargets) {
+      console.log(instance.tasks); // just dump the tasks for now
+    } else {
+      // since no option was given that would prevent target execution, run them
+      const targets: string[] = args.targets;
+
+      // if no target was given, attempt to run the default target
+      // if it doesn't exist, then the user has likely done something wrong
+      if (!args.targets.length) {
+        targets.push(DefaultTaskTarget);
+      }
+
+      // run Take with the given arguments
+      await instance.run(targets);
+    }
+  }
+
+  public static async newInstance(
+    path?: string,
+    fromDir: boolean = true,
+    envSetup?: (env: Environment) => Environment
+  ): Promise<Take> {
     // set the working directory
     path = path || process.cwd();
 
     // setup the run environment for Take instance
-    const env = new Environment(Options());
+    let env = new Environment(Options());
+    if (envSetup) {
+      env = envSetup(env);
+    }
 
     // load Takefile
     const loader: Loader = await (fromDir ? Loader.fromDir(path, env) : Loader.fromFile(path, env));
@@ -71,8 +139,14 @@ export class Take {
      * The current environment of the Take instance.
      */
     public env: Environment,
-    private tasks: TaskBatch,
-    private runner: Runner
+    /**
+     * The tasks that have been loaded from the Takefile.
+     */
+    public tasks: TaskBatch,
+    /**
+     * The runner that can execute the targets.
+     */
+    public runner: Runner
   ) { }
 
   /**
@@ -85,34 +159,5 @@ export class Take {
     for (const target of targets) {
       await this.runner.execute(target);
     }
-  }
-
-  /**
-   * Runs Take using the command line.
-   *
-   * @returns The exit code the process should exit with.
-   */
-  public async cli(): Promise<number> {
-    const args: ICliArgs = processArgs();
-
-    // check meta options before trying to execute tasks
-    if (args.listTargets) {
-      console.log(this.tasks); // just dump the tasks for now
-    } else {
-      // since no option was given that would prevent target execution, run them
-      const targets: string[] = args.targets;
-
-      // if no target was given, attempt to run the default target
-      // if it doesn't exist, then the user has likely done something wrong
-      if (args.targets.length === 0) {
-        targets.push(DefaultTaskTarget);
-      }
-
-      // run Take with the given arguments
-      await this.run(targets);
-    }
-
-    // if we get here, it means execution went well, so set the exit code to 0
-    return 0;
   }
 }
