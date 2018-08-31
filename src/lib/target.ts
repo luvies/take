@@ -6,12 +6,12 @@ export const DefaultTaskTarget = 'default';
 /**
  * A batch of task configs.
  */
-export type TaskConfigBatch = Record<string, TaskConfig>;
+export type TargetConfigBatch = Record<string, TargetConfig>;
 
 /**
  * The spec for the task config object.
  */
-export interface TaskConfig {
+export interface TargetConfig {
   /**
    * The task description.
    */
@@ -28,7 +28,7 @@ export interface TaskConfig {
   /**
    * The children tasks of this task. Allows for namespacing.
    */
-  children?: TaskConfigBatch;
+  children?: TargetConfigBatch;
   /**
    * Whether this task depends on the parent task before it can be run.
    * If the dependencies are run synchronously, then the parent task
@@ -44,26 +44,26 @@ export interface TaskConfig {
 /**
  * A batch of tasks.
  */
-export type TaskBatch = Record<string, Task>;
+export type TargetBatch = Record<string, Target>;
 
 /**
  * Contains information about a task and its children, as well and being able to
  * execute it.
  */
-export class Task {
+export class Target {
   /**
    * Converts the task config into an object that contains all the tasks it declares.
    *
    * @returns The base task set object.
    */
-  public static processTaskConfig(config: TaskConfigBatch, env: Environment): TaskBatch {
-    const tasks: TaskBatch = {};
-    for (const target in config) {
-      if (config.hasOwnProperty(target)) {
-        tasks[target] = new Task(target, config[target], env);
+  public static processTaskConfig(config: TargetConfigBatch, env: Environment): TargetBatch {
+    const targets: TargetBatch = {};
+    for (const name in config) {
+      if (config.hasOwnProperty(name)) {
+        targets[name] = new Target(name, config[name], env);
       }
     }
-    return tasks;
+    return targets;
   }
 
   /**
@@ -73,11 +73,11 @@ export class Task {
   /**
    * The child tasks.
    */
-  public children: TaskBatch;
+  public children: TargetBatch;
 
   public constructor(
     name: string,
-    private config: TaskConfig,
+    private config: TargetConfig,
     private env: Environment,
     containingNamespace?: string
   ) {
@@ -108,7 +108,7 @@ export class Task {
       const fullName: string = containingNamespace ? env.ns.join(containingNamespace, name) : name;
       for (const child in config.children) {
         if (config.children.hasOwnProperty) {
-          this.children[child] = new Task(child, config.children[child], env, fullName);
+          this.children[child] = new Target(child, config.children[child], env, fullName);
         }
       }
     }

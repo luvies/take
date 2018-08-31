@@ -3,7 +3,7 @@ import { Environment } from './environment';
 import * as fsp from './shims/fsp';
 import { TakefileEnv } from './take';
 import { TakeError } from './take-error';
-import { TaskConfigBatch } from './task';
+import { TargetConfigBatch } from './target';
 
 export class Loader {
   public static async fromDir(dir: string, env: Environment): Promise<Loader> {
@@ -42,12 +42,12 @@ export class Loader {
     private env: Environment
   ) { }
 
-  public async loadConfig(tfEnv: TakefileEnv): Promise<TaskConfigBatch> {
+  public async loadConfig(tfEnv: TakefileEnv): Promise<TargetConfigBatch> {
     // since we're not doing anything fancy yet, just require it normally
     const takefile = require(resolve(this.path));
 
     // since typescript uses 'default' for exporting by default, check it first
-    const builder: (take: TakefileEnv) => TaskConfigBatch | Promise<TaskConfigBatch>
+    const builder: (take: TakefileEnv) => TargetConfigBatch | Promise<TargetConfigBatch>
       = takefile.default || takefile;
 
     // return the builder regardless, since this function can be awaited on

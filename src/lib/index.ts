@@ -6,6 +6,6 @@ export { IOptions, IShellOptions, Options } from './options';
 export { Runner } from './runner';
 export { Take, TakefileEnv } from './take';
 export { TakeError } from './take-error';
-export { DefaultTaskTarget, Task, TaskBatch, TaskConfig, TaskConfigBatch } from './task';
+export { DefaultTaskTarget, Target, TargetBatch, TargetConfig, TargetConfigBatch } from './target';
 export { Utils } from './utils';
 

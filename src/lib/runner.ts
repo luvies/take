@@ -1,10 +1,10 @@
 import { Environment } from './environment';
 import { TakeError } from './take-error';
-import { Task, TaskBatch } from './task';
+import { Target, TargetBatch } from './target';
 
 interface DependencyNode {
-  target: string;
-  task: Task;
+  name: string;
+  target: Target;
   args: string[];
   leaves: DependencyNode[];
 }
@@ -12,7 +12,7 @@ interface DependencyNode {
 export class Runner {
   public constructor(
     private env: Environment,
-    private tasks: TaskBatch
+    private tasks: TargetBatch
   ) { }
 
   /**
@@ -37,7 +37,7 @@ export class Runner {
   private async execNode(node: DependencyNode): Promise<void> {
     // if we have any leaves, execute them according to the task config
     if (node.leaves) {
-      if (node.task.parallelDeps) {
+      if (node.target.parallelDeps) {
         // execute the leaves in parallel
         const deps: Array<Promise<void>> = [];
         for (const leaf of node.leaves) {
@@ -55,21 +55,21 @@ export class Runner {
     }
 
     // now the dependencies are done, execute the node itself
-    await node.task.execute(node.args);
+    await node.target.execute(node.args);
   }
 
   /**
    * Constructs the dependency tree. It will take into account multiple occurences
    * of a target and ignore them.
    *
-   * @param target The target to work off.
+   * @param name The target to work off.
    * @param parent The parent node.
    * @param path The path the tree took to get to this node. Used for detecting cyclic dependencies.
    * @param foundTargets The hashmap of found dependencies. Used to ignore dupilcates.
    * @returns The fully constructed node.
    */
   private buildDependencyTree(
-    target: string, parent?: string,
+    name: string, parent?: string,
     path: string[] = [], foundTargets: Record<string, boolean> = {}
   ): DependencyNode {
     // get copy of path to prevent mutation
@@ -81,22 +81,22 @@ export class Runner {
     }
 
     // current node
-    const [task, args] = this.getTask(target);
+    const [target, args] = this.getTask(name);
     const node: DependencyNode = {
+      name,
       target,
-      task,
       args,
       leaves: []
     };
 
     // build leaves
-    if (node.task.deps) {
-      for (const dep of node.task.deps) {
+    if (node.target.deps) {
+      for (const dep of node.target.deps) {
         // only attempt to add the dependency to the tree if we need to
         if (!foundTargets[dep]) {
           // make sure we don't loop
           if (path.indexOf(dep) >= 0) {
-            path.push(target);
+            path.push(name);
             path.push(dep);
             throw new TakeError(
               `Cyclic target dependency detected, aborting (dependency path: ${path.join(' -> ')})`
@@ -105,7 +105,7 @@ export class Runner {
             // since the dependency hasn't been encountered before, and we are in a valid state,
             // we can build and add it to leaves
             foundTargets[dep] = true; // make sure we mark it as found
-            node.leaves.push(this.buildDependencyTree(dep, target, path, foundTargets));
+            node.leaves.push(this.buildDependencyTree(dep, name, path, foundTargets));
           }
         }
       }
@@ -118,18 +118,18 @@ export class Runner {
   /**
    * Converts the target string into the resolved task.
    *
-   * @param target The target to search for.
+   * @param name The target to search for.
    * @returns The resolved task and its arguments.
    */
-  private getTask(target: string): [Task, string[]] {
-    let ctask: Task | undefined;
+  private getTask(name: string): [Target, string[]] {
+    let ctask: Target | undefined;
     let tasks = this.tasks;
-    const extract = this.env.ns.extractArgs(target);
+    const extract = this.env.ns.extractArgs(name);
     if (!extract) {
-      throw new TakeError(`${target} is not a valid target`);
+      throw new TakeError(`${name} is not a valid target`);
     }
-    const [name, args] = extract;
-    const nss = this.env.ns.split(name);
+    const [tgtName, args] = extract;
+    const nss = this.env.ns.split(tgtName);
     for (const cns of nss) {
       if (tasks[cns]) {
         ctask = tasks[cns];
@@ -140,7 +140,7 @@ export class Runner {
       }
     }
     if (!ctask) {
-      throw new TakeError(`Unable to find target ${target}`);
+      throw new TakeError(`Unable to find target ${name}`);
     }
     return [ctask, args];
   }
