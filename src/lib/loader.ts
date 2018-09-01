@@ -18,7 +18,7 @@ export class Loader {
 
     // make sure we found it
     if (!fpath) {
-      throw new TakeError('Unable to locate Takefile');
+      throw new TakeError(env, 'Unable to locate Takefile');
     }
 
     // create the loader and return it
@@ -30,7 +30,7 @@ export class Loader {
     try {
       await fsp.access(file, fsp.constants.F_OK);
     } catch (err) {
-      throw new TakeError('Given Takefile does not exist');
+      throw new TakeError(env, 'Given Takefile does not exist');
     }
 
     // create new loader and return it

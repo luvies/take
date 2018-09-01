@@ -99,6 +99,7 @@ export class Runner {
             path.push(name);
             path.push(dep);
             throw new TakeError(
+              this.env,
               `Cyclic target dependency detected, aborting (dependency path: ${path.join(' -> ')})`
             );
           } else {
@@ -126,7 +127,7 @@ export class Runner {
     let tasks = this.tasks;
     const extract = this.env.ns.extractArgs(name);
     if (!extract) {
-      throw new TakeError(`${name} is not a valid target`);
+      throw new TakeError(this.env, `${name} is not a valid target`);
     }
     const [tgtName, args] = extract;
     const nss = this.env.ns.split(tgtName);
@@ -140,7 +141,7 @@ export class Runner {
       }
     }
     if (!ctask) {
-      throw new TakeError(`Unable to find target ${name}`);
+      throw new TakeError(this.env, `Unable to find target ${name}`);
     }
     return [ctask, args];
   }

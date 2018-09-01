@@ -12,10 +12,44 @@ import { TakeError } from './take-error';
  * Provides various utilities that Takefiles can make use of.
  */
 export class Utils {
+  public static copy(old: Utils): Utils {
+    return new Utils(old.__env);
+  }
+
   public constructor(
     // tslint:disable-next-line:variable-name
     private __env: Environment
   ) { }
+
+  /**
+   * Logs a message to stdout, applying the current environment to it beforehand.
+   * This will abide by the suppress options.
+   *
+   * @param messages The list of objects to print.
+   */
+  public log(...messages: any[]): void {
+    if (
+      !this.__env.config.suppress.includes(SuppressOptions.TakeStdout)
+    ) {
+      // tslint:disable-next-line:no-console
+      console.log(...messages);
+    }
+  }
+
+  /**
+   * Logs a message to stderr, applying the current environment to it beforehand.
+   * This will abide by the suppress options.
+   *
+   * @param messages The list of objects to print.
+   */
+  public logError(...messages: any[]): void {
+    if (
+      !this.__env.config.suppress.includes(SuppressOptions.TakeStderr)
+    ) {
+      // tslint:disable-next-line:no-console
+      console.error(...messages);
+    }
+  }
 
   /**
    * Executes a given command, respecting `shellOptions.echo`.
@@ -75,6 +109,7 @@ export class Utils {
     if (!this.__env.config.suppress.includes(SuppressOptions.Echo) && copts.echo) {
       // if we are echoing to console, do that now
       const fmtargs = args ? ` ${args.map(arg => `'${arg.replace('\'', '\\\'')}'`).join(' ')}` : '';
+      // tslint:disable-next-line:no-console
       console.log(`${copts.echoPrefix}${cmd}${fmtargs}${copts.echoSuffix}`);
     }
     const proc = spawn(cmd, args, spawnOpts);
@@ -103,7 +138,7 @@ export class Utils {
           if (code === 0) {
             resolve(code);
           } else {
-            reject(new TakeError('Target execution aborted: process exited with code', code));
+            reject(new TakeError(this.__env, 'Target execution aborted: process exited with code', code));
           }
         } else {
           // otherwise just resolve regardless

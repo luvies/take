@@ -29,7 +29,6 @@
       true,
       "allow-fast-null-checks"
     ],
-    "no-return-await": true,
-    "no-console": false
+    "no-return-await": true
   }
 }

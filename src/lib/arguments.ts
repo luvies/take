@@ -157,9 +157,9 @@ export async function processArgs(): Promise<ICliArgs> {
     suppress.push(SuppressOptions.TakeStdout);
     suppress = suppress.filter(value => value !== MetaSuppressOptions.Stdout);
   }
-  if (args.suppress.includes(MetaSuppressOptions.Stderr)) {
-    args.suppress.push(SuppressOptions.CmdStderr);
-    args.suppress.push(SuppressOptions.TakeStderr);
+  if (suppress.includes(MetaSuppressOptions.Stderr)) {
+    suppress.push(SuppressOptions.CmdStderr);
+    suppress.push(SuppressOptions.TakeStderr);
     suppress = suppress.filter(value => value !== MetaSuppressOptions.Stderr);
   }
   args.suppress = suppress.filter((value, i) => suppress.indexOf(value) === i);

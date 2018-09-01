@@ -8,6 +8,11 @@ import * as fsp from './shims/fsp';
 import { DefaultTaskTarget, Target, TargetBatch, TargetConfigBatch } from './target';
 import { Utils } from './utils';
 
+export interface ICliEnv {
+  trace: boolean;
+  env?: Environment;
+}
+
 /**
  * The spec for the object that is passed into the Takefile exported function.
  */
@@ -35,20 +40,17 @@ export type TakefileEnv = Utils & {
 export class Take {
   /**
    * Creates a Take instance using the command line arguments.
+   *
+   * @param clienv The object used to pass info back out to the cli caller.
    */
-  public static async runFromCli(): Promise<void> {
-    // setup the cli global to allow the cli to check options
-    // using the global so if errors occur before this function returns,
-    // we could still apply some of the options
-    (global as any).takecli = {};
-
+  public static async runFromCli(clienv: ICliEnv): Promise<void> {
     // load arguments
     const args: ICliArgs = await processArgs();
 
     // process some arguments before creating a Take instance
     if (args.trace) {
       // if trace was passed, enable tracing
-      (global as any).takecli.trace = true;
+      clienv.trace = true;
     }
     if (args.cwd) {
       process.chdir(args.cwd);
@@ -66,19 +68,24 @@ export class Take {
     }
 
     // create a new Take instance
+    let env!: Environment;
     const instance = await Take.newInstance(
       path, fromDir,
-      (env) => {
+      (cenv) => {
         // apply cli arguments to config
-        env.config.suppress = args.suppress;
+        cenv.config.suppress = args.suppress;
 
-        return env;
+        // store a reference to current env in the cli variable
+        clienv.env = cenv;
+
+        // store the env here as well so we can use it
+        env = cenv;
       }
     );
 
     // check meta options before trying to execute tasks
     if (args.listTargets) {
-      console.log(instance.targets); // just dump the tasks for now
+      env.utils.log(instance.targets); // just dump the tasks for now
     } else {
       // since no option was given that would prevent target execution, run them
       const names: string[] = args.targets;
@@ -97,15 +104,15 @@ export class Take {
   public static async newInstance(
     path?: string,
     fromDir: boolean = true,
-    envSetup?: (env: Environment) => Environment
+    envSetup?: (env: Environment) => void
   ): Promise<Take> {
     // set the working directory
     path = path || process.cwd();
 
     // setup the run environment for Take instance
-    let env = new Environment(Options());
+    const env = new Environment(Options());
     if (envSetup) {
-      env = envSetup(env);
+      envSetup(env);
     }
 
     // load Takefile
@@ -121,7 +128,7 @@ export class Take {
 
   private static createTakefileEnv(env: Environment): TakefileEnv {
     // make a copy of the utils object so we don't alter the current one
-    return Object.assign(new Utils(env),
+    return Object.assign(Utils.copy(env.utils),
       {
         options: env.options,
         fsp,
