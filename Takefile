@@ -3,7 +3,6 @@ const { join } = require('path');
 module.exports = (take) => {
   take.options.shell.printStdout = true;
   take.options.shell.printStderr = true;
-  take.options.echo = true;
 
   return {
     default: { deps: ['clean', 'build'] },
