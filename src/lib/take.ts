@@ -100,8 +100,12 @@ export class Take {
         names.push(DefaultTaskTarget);
       }
 
-      // run Take with the given arguments
+      // run Take with the given arguments while tracking execution time
+      const start = process.hrtime();
       await instance.run(names);
+      const end = process.hrtime();
+      const [diffSecs, diffNanoSecs] = [end[0] - start[0], end[1] - start[1]];
+      env.utils.log(chalk.dim(`Done in ${diffSecs}.${diffNanoSecs.toString().slice(0, 2)}s`));
     }
   }
 
