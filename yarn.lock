@@ -134,6 +134,12 @@ escape-string-regexp@1.0.5, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
+format-tree@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/format-tree/-/format-tree-1.0.2.tgz#a13fb886670cad9b20694b4d32e1919fdb52d8a0"
+  dependencies:
+    string-length "^2.0.0"
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"

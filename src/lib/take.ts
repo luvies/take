@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import stringLength from 'string-length';
+import { formatTree, TreeNode } from 'format-tree';
 import * as TakeModule from '.';
 import { CliArgs, processArgs } from './arguments';
 import { Environment } from './environment';
@@ -184,71 +184,61 @@ export class Take {
    * currently loaded.
    */
   public getTargetListString(): string[] {
-    const toBuild: Array<{ line: string, desc?: string }> = [];
-
-    // build target list
-    const processTargets = (targets: TargetBatch, prefix: string) => {
-      const keys = Object.keys(targets);
-      for (let i = 0; i < keys.length; i++) {
-        // shorthands
-        const name = keys[i];
-        const target = targets[name];
-
-        // set up guide for current target
-        let guide: string;
-        const last = i === keys.length - 1;
-        const hasChildren = Object.keys(target.children).length;
-        if (last) {
-          guide = '└─';
-        } else {
-          guide = '├─';
-        }
-        if (hasChildren) {
-          guide += '┬';
-        } else {
-          guide += '─';
-        }
-        guide += ' ';
-
-        // build current line
-        let line = chalk.dim(prefix + guide);
-        if (target.executes) {
-          line += chalk.green(name);
-        } else {
-          line += chalk.dim(name);
-        }
-        toBuild.push({
-          line,
-          desc: target.desc
-        });
-
-        // build children
-        if (hasChildren) {
-          processTargets(
-            target.children,
-            prefix + (last ? ' ' : '│') + ' '
-          );
-        }
+    // helpers
+    const getNameFmt = (name: string, executes: boolean): string => {
+      if (executes) {
+        return chalk.green(name);
+      } else {
+        return chalk.dim(name);
       }
     };
-    processTargets(this.targets, '');
 
-    // get the longest name so we can format the descriptions occordingly
-    let maxLen = 0;
-    for (const item of toBuild) {
-      maxLen = Math.max(maxLen, stringLength(item.line));
-    }
+    // build target list
+    const processTargets = (targets: TargetBatch): TreeNode[] => {
+      const nodes: TreeNode[] = [];
 
-    // add descriptions and build full output
-    const output: string[] = [];
-    for (const item of toBuild) {
-      let line = item.line;
-      if (item.desc) {
-        line += ' '.repeat(maxLen - stringLength(item.line)) + chalk.dim(' | ') + item.desc;
+      const keys = Object.keys(targets);
+      for (const name of keys) {
+        // exclude root node
+        if (!name) {
+          continue;
+        }
+
+        // build node
+        const target = targets[name];
+        const node: TreeNode = {
+          text: getNameFmt(target.name, target.executes),
+          extra: target.desc
+        };
+
+        // build children
+        if (Object.keys(target.children).length) {
+          node.children = processTargets(
+            target.children
+          );
+        }
+
+        // add node
+        nodes.push(node);
       }
-      output.push(line);
+
+      return nodes;
+    };
+
+    // build tree
+    let tree: TreeNode | TreeNode[] = processTargets(this.targets);
+    if (this.targets['']) {
+      tree = {
+        text: getNameFmt('default', this.targets[''].executes),
+        extra: this.targets[''].desc,
+        children: tree
+      };
     }
 
-    return output;
+    // return formatted tree
+    return formatTree(tree, {
+      guideFormat: chalk.dim,
+      extraSplit: chalk.dim(' | ')
+    });
   }
 }

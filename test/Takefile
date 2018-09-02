@@ -100,7 +100,6 @@ module.exports = async (take) => {
               desc: 'target5:child1:test3'
             },
             test12: {
-              deps: [''],
               desc: 'target5:child1:test3'
             }
           }
