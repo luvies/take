@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Environment } from '../src/lib/environment';
-import { Options } from '../src/lib/options';
+import { DefaultOptions } from '../src/lib/options';
 import { TakeError } from '../src/lib/take-error';
 
 describe('TakeError', function(this) {
   describe('#isTakeError', function(this) {
     it('should correctly identify an instance as one of TakeError', function(this) {
-      const err = new TakeError(new Environment(Options()));
+      const err = new TakeError(new Environment(DefaultOptions()));
       expect(TakeError.isTakeError(err)).to.be.true;
     })
 
@@ -27,7 +27,7 @@ describe('TakeError', function(this) {
 
   describe('#name', function(this) {
     it('should equal the class name', function(this) {
-      const err = new TakeError(new Environment(Options()));
+      const err = new TakeError(new Environment(DefaultOptions()));
       expect(err.name).to.equal(TakeError.name);
     });
   });

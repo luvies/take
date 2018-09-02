@@ -1,11 +1,11 @@
-import { IOptions } from './options';
+import { Options } from './options';
 
 /**
  * Provides helpers methods for dealing with namespaces.
  */
 export class Namespace {
   public constructor(
-    private options: IOptions
+    private options: Options
   ) { }
 
   /**

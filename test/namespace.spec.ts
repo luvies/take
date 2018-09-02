@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Namespace } from '../src/lib/namespace';
-import { IOptions, Options } from '../src/lib/options';
+import { DefaultOptions, Options } from '../src/lib/options';
 
 describe('Namespace', function(this) {
-  let opts: IOptions;
+  let opts: Options;
   let ns: Namespace;
 
   function initEach() {
-    opts = Options();
+    opts = DefaultOptions();
     ns = new Namespace(opts);
   }
 

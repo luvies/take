@@ -18,7 +18,7 @@ enum MetaSuppressOptions {
 /**
  * The arguments object spec.
  */
-export interface ICliArgs {
+export interface CliArgs {
   /**
    * The targets to run synchronously in order.
    */
@@ -50,7 +50,7 @@ export interface ICliArgs {
   suppress: SuppressOptions[];
 }
 
-export async function processArgs(): Promise<ICliArgs> {
+export async function processArgs(): Promise<CliArgs> {
   // read package information
   const pgk = JSON.parse(
     await fsp.readFile(join(__dirname, '..', '..', 'package.json'), { encoding: 'utf8' })

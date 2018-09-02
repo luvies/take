@@ -1,16 +1,16 @@
 import chalk from 'chalk';
 import stringLength from 'string-length';
 import * as TakeModule from '.';
-import { ICliArgs, processArgs } from './arguments';
+import { CliArgs, processArgs } from './arguments';
 import { Environment } from './environment';
 import { Loader } from './loader';
-import { IOptions, Options } from './options';
+import { DefaultOptions, Options } from './options';
 import { Runner } from './runner';
 import * as fsp from './shims/fsp';
 import { DefaultTaskTarget, Target, TargetBatch, TargetConfigBatch } from './target';
 import { Utils } from './utils';
 
-export interface ICliEnv {
+export interface CliEnv {
   trace: boolean;
   env?: Environment;
 }
@@ -22,7 +22,7 @@ export type TakefileEnv = Utils & {
   /**
    * The options used to manage the behaviour of various parts of take.
    */
-  options: IOptions,
+  options: Options,
   /**
    * A shim library providing promise-based versions of the functions in the
    * fs library. Once fs.promises comes out of experimental, it is recommened
@@ -45,9 +45,9 @@ export class Take {
    *
    * @param clienv The object used to pass info back out to the cli caller.
    */
-  public static async runFromCli(clienv: ICliEnv): Promise<void> {
+  public static async runFromCli(clienv: CliEnv): Promise<void> {
     // load arguments
-    const args: ICliArgs = await processArgs();
+    const args: CliArgs = await processArgs();
 
     // process some arguments before creating a Take instance
     if (args.trace) {
@@ -118,7 +118,7 @@ export class Take {
     path = path || process.cwd();
 
     // setup the run environment for Take instance
-    const env = new Environment(Options());
+    const env = new Environment(DefaultOptions());
     if (envSetup) {
       envSetup(env);
     }

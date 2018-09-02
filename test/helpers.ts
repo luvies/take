@@ -1,6 +1,6 @@
-import { TaskBatch } from "../src/lib/task";
+import { TargetBatch } from "../src/lib/target";
 
-export function sampleConfig(): TaskBatch {
+export function sampleConfig(): TargetBatch {
   return {
 
   };

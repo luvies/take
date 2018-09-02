@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Environment } from '../src/lib/environment';
-import { Options } from '../src/lib/options';
+import { DefaultOptions } from '../src/lib/options';
 import { Target } from '../src/lib/target';
 
 describe('Task', function(this) {
   let env: Environment;
 
   function initEach() {
-    env = new Environment(Options());
+    env = new Environment(DefaultOptions());
   }
 
   describe('#constructor', function(this) {

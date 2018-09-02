@@ -1,6 +1,6 @@
 import { SuppressOptions } from './arguments';
 import { Namespace } from './namespace';
-import { IOptions } from './options';
+import { Options } from './options';
 import { Utils } from './utils';
 
 export class Environment {
@@ -13,7 +13,7 @@ export class Environment {
     };
 
   public constructor(
-    public options: IOptions
+    public options: Options
   ) {
     this.ns = new Namespace(options);
     this.utils = new Utils(this);

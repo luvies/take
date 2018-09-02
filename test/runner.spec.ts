@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Environment } from '../src/lib/environment';
-import { Options } from '../src/lib/options';
+import { DefaultOptions } from '../src/lib/options';
 import { Runner } from '../src/lib/runner';
 import { Target, TargetBatch } from '../src/lib/target';
 
@@ -14,7 +14,7 @@ describe('Runner', function(this) {
 
   // helper methods
   function initEach() {
-    env = new Environment(Options());
+    env = new Environment(DefaultOptions());
     conf = {};
     executions = 0;
   }

@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-import { Environment, ICliEnv, Take, TakeError } from '../lib';
+import { CliEnv, Environment, Take, TakeError } from '../lib';
 
 function logError(env?: Environment, ...messages: any[]) {
   if (env) {
@@ -11,7 +11,7 @@ function logError(env?: Environment, ...messages: any[]) {
 }
 
 // run app
-const clienv: ICliEnv = {
+const clienv: CliEnv = {
   trace: false
 };
 Take.runFromCli(clienv).catch(err => {

@@ -51,7 +51,7 @@ export type IShellOptions = typeof DefaultShellOptions;
 /**
  * The spec for the options object.
  */
-export interface IOptions {
+export interface Options {
   /**
    * The character used to separate the namespace names.
    * @default ':'
@@ -76,7 +76,7 @@ export interface IOptions {
   shell: IShellOptions;
 }
 
-export function Options(): IOptions {
+export function DefaultOptions(): Options {
   return {
     namespaceSeparator: ':',
     shell: merge({}, DefaultShellOptions)
