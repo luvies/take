@@ -3,12 +3,12 @@ import 'mocha';
 import { Environment } from '../src/lib/environment';
 import { Options } from '../src/lib/options';
 import { Runner } from '../src/lib/runner';
-import { Task, TaskBatch } from '../src/lib/task';
+import { Target, TargetBatch } from '../src/lib/target';
 
 describe('Runner', function(this) {
   // instance variables
   let env: Environment;
-  let conf: TaskBatch;
+  let conf: TargetBatch;
   let runner: Runner;
   let executions: number;
 
@@ -36,7 +36,7 @@ describe('Runner', function(this) {
     if (namespace.length > 1) {
       containingNamespace = env.ns.join(...namespace.slice(0, namespace.length - 1))
     }
-    crecord[target] = new Task(target, {
+    crecord[target] = new Target(target, {
       execute() {
         executions++;
       }

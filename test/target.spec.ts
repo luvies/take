@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { Environment } from '../src/lib/environment';
 import { Options } from '../src/lib/options';
-import { Task } from '../src/lib/task';
+import { Target } from '../src/lib/target';
 
 describe('Task', function(this) {
   let env: Environment;
@@ -15,8 +15,8 @@ describe('Task', function(this) {
     beforeEach(initEach);
 
     it('should work', function(this) {
-      const task = new Task('test', {}, env);
-      expect(task).to.be.instanceOf(Task);
+      const task = new Target('test', {}, env);
+      expect(task).to.be.instanceOf(Target);
     });
   });
 
@@ -24,12 +24,12 @@ describe('Task', function(this) {
     beforeEach(initEach);
 
     it('should process a single empty top-level task', function(this) {
-      const tasks = Task.processTaskConfig({
+      const tasks = Target.processTaskConfig({
         'target1': {}
       }, env);
       expect(tasks).have.key('target1');
       const task = tasks['target1'];
-      expect(task).to.be.instanceOf(Task);
+      expect(task).to.be.instanceOf(Target);
       expect(task.children).to.be.empty;
       expect(task.deps).to.be.empty;
       expect(task.desc).to.be.undefined;

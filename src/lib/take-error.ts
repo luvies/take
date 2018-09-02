@@ -16,7 +16,7 @@ export class TakeError extends Error {
 
   public constructor(
     private env: Environment,
-    message: any,
+    message?: any,
     public internalError?: Error | string
   ) {
     super(message);
