@@ -2,6 +2,7 @@ module.exports = async (take) => {
   take.options.shell.printStdout = true;
   take.options.shell.printStderr = true;
   take.options.shell.echo = true;
+  // take.options.emojis = false;
 
   await take.exec('echo init');
 

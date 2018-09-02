@@ -59,8 +59,25 @@ export class Utils {
    * @param message The message to display to the console.
    * @param internalError The error string or object that caused the error.
    */
-  public error(message: string, internalError?: Error | string) {
+  public error(message: string, internalError?: Error | string): never {
     throw new TakeError(this.__env, message, internalError);
+  }
+
+  /**
+   * Will return the given input if emojis are enabled in the current environment,
+   * or an empty string if not.
+   *
+   * @param emoji The emoji string to use.
+   * @returns The emoji string if emojis are enabled, an empty string otherwise.
+   */
+  public useEmoji(emoji: string): string {
+    let use: boolean;
+    if (typeof this.__env.config.emojis !== 'undefined') {
+      use = this.__env.config.emojis;
+    } else {
+      use = this.__env.options.emojis;
+    }
+    return use ? emoji : '';
   }
 
   /**

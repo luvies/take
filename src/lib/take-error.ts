@@ -28,7 +28,7 @@ export class TakeError extends Error {
    * @param outputInternal Whether to also output the internal error if it was given.
    */
   public log(outputInternal: boolean = true) {
-    this.env.utils.logError('Error:', this.message);
+    this.env.utils.logError(`${this.env.utils.useEmoji('💥  ')}Error: ${this.message}`);
     if (outputInternal && this.internalError) {
       this.env.utils.logError('Internal error:');
       this.env.utils.logError(this.internalError);

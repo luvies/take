@@ -7,7 +7,8 @@ export class Environment {
   public ns: Namespace;
   public utils: Utils;
   public config: {
-    suppress: SuppressOptions[]
+    suppress: SuppressOptions[],
+    emojis?: boolean
   } = {
       suppress: []
     };

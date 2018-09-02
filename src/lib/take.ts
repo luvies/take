@@ -76,6 +76,7 @@ export class Take {
       (cenv) => {
         // apply cli arguments to config
         cenv.config.suppress = args.suppress;
+        cenv.config.emojis = args.emojis;
 
         // store a reference to current env in the cli variable
         clienv.env = cenv;
@@ -88,7 +89,7 @@ export class Take {
     // check meta options before trying to execute tasks
     if (args.listTargets) {
       env.utils.log(chalk.dim('Targets in green have direct executions, dimmed ones do not'));
-      env.utils.log('Targets:');
+      env.utils.log(`${env.utils.useEmoji('🔎  ')}Targets:`);
       env.utils.log(instance.getTargetListString().join('\n'));
     } else {
       // since no option was given that would prevent target execution, run them
@@ -105,7 +106,9 @@ export class Take {
       await instance.run(names);
       const end = process.hrtime();
       const [diffSecs, diffNanoSecs] = [end[0] - start[0], end[1] - start[1]];
-      env.utils.log(chalk.dim(`Done in ${diffSecs}.${diffNanoSecs.toString().slice(0, 2)}s`));
+      env.utils.log(chalk.dim(
+        `${env.utils.useEmoji('✨  ')}Done in ${diffSecs}.${diffNanoSecs.toString().slice(0, 2)}s`
+      ));
     }
   }
 

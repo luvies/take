@@ -74,11 +74,18 @@ export interface Options {
    * These also apply to exec and its variations unless otherwise stated.
    */
   shell: IShellOptions;
+  /**
+   * Whether to use ✨ emojis ✨ in terminal output.
+   * The default is environment dependant, since not everything supports emojis.
+   * @default process.stdout.isTTY && process.platform === 'darwin'
+   */
+  emojis: boolean;
 }
 
 export function DefaultOptions(): Options {
   return {
     namespaceSeparator: ':',
-    shell: merge({}, DefaultShellOptions)
+    shell: merge({}, DefaultShellOptions),
+    emojis: !!process.stdout.isTTY && process.platform === 'darwin'
   };
 }

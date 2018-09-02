@@ -48,6 +48,10 @@ export interface CliArgs {
    * The outputs to suppress from the Takefile as it executes.
    */
   suppress: SuppressOptions[];
+  /**
+   * Whether to force emojis on or off.
+   */
+  emojis?: boolean;
 }
 
 export async function processArgs(): Promise<CliArgs> {
@@ -120,6 +124,14 @@ export async function processArgs(): Promise<CliArgs> {
     }
   );
   parser.addArgument(
+    ['--emojis'],
+    {
+      help: 'Whether to force Take to use or disable emojis.',
+      choices: ['on', 'off'],
+      metavar: '{on,off}'
+    }
+  );
+  parser.addArgument(
     'targets',
     {
       help: 'The targets to execute from the given Takefile. ' +
@@ -163,6 +175,11 @@ export async function processArgs(): Promise<CliArgs> {
     suppress = suppress.filter(value => value !== MetaSuppressOptions.Stderr);
   }
   args.suppress = suppress.filter((value, i) => suppress.indexOf(value) === i);
+
+  // apply emoji argument
+  if (typeof args.emojis !== 'undefined') {
+    args.emojis = args.emojis === 'on';
+  }
 
   return args;
 }
