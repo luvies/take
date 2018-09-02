@@ -185,6 +185,24 @@ module.exports = async (take) => {
           desc: 'crash:test'
         }
       }
+    },
+    collate: {
+      desc: 'A collation target for testing dependency tree listing',
+      deps: [
+        ':target4',
+        ':echo2',
+        'internal',
+        ':crash:test',
+        ':target3'
+      ],
+      children: {
+        internal: {
+          deps: [
+            ':target7',
+            ':target5:child1:test3'
+          ]
+        }
+      }
     }
   };
 };

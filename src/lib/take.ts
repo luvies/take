@@ -4,8 +4,9 @@ import * as TakeModule from '.';
 import { CliArgs, processArgs } from './arguments';
 import { Environment } from './environment';
 import { Loader } from './loader';
+import { Namespace } from './namespace';
 import { DefaultOptions, Options } from './options';
-import { Runner } from './runner';
+import { DependencyNode, Runner } from './runner';
 import * as fsp from './shims/fsp';
 import { Target, TargetBatch, TargetConfigBatch } from './target';
 import { Utils } from './utils';
@@ -91,6 +92,16 @@ export class Take {
       env.utils.log(chalk.dim('Targets in green have direct executions, dimmed ones do not'));
       env.utils.log(`${env.utils.useEmoji('🔎  ')}Targets:`);
       env.utils.log(instance.getTargetListString().join('\n'));
+    } else if (args.deps) {
+      const ns = env.root.resolve(args.deps);
+      env.utils.log(chalk`{green Green} {dim targets would be executed}`);
+      env.utils.log(chalk`{cyan Cyan} {dim targets would be executed, but only have dependencies}`);
+      env.utils.log(chalk`{magenta Magenta} {dim targets would be executed,}`);
+      env.utils.log(chalk`        {dim but don't have an execute function or dependencies}`);
+      env.utils.log(chalk`{dim Dimmed targets would be skipped}`);
+      env.utils.log(chalk`{red Red} {dim targets cause a cyclic dependency}`);
+      env.utils.log(`${env.utils.useEmoji('🔧  ')}Dependency tree:`);
+      env.utils.log(instance.getTargetDepTreeString(ns).join('\n'));
     } else {
       // since no option was given that would prevent target execution, run them
       const names: string[] = args.targets;
@@ -237,6 +248,51 @@ export class Take {
 
     // return formatted tree
     return formatTree(tree, {
+      guideFormat: chalk.dim,
+      extraSplit: chalk.dim(' | ')
+    });
+  }
+
+  /**
+   * Returns the list of lines that can be printed to show the dependency tree
+   * for a given target.
+   */
+  public getTargetDepTreeString(ns: Namespace): string[] {
+    // build nodes
+    const processNode = (depNode: DependencyNode): TreeNode => {
+      // build tree node
+      let depName;
+      if (depNode.cyclic) {
+        depName = chalk.red(depNode.name);
+      } else if (!depNode.execute) {
+        depName = chalk.dim(depNode.name);
+      } else {
+        if (depNode.target.executes) {
+          depName = chalk.green(depNode.name);
+        } else if (!depNode.target.deps.length) {
+          depName = chalk.magenta(depNode.name);
+        } else {
+          depName = chalk.cyan(depNode.name);
+        }
+      }
+
+      const treeNode: TreeNode = {
+        text: depName,
+        extra: depNode.target.desc,
+        children: []
+      };
+
+      // build children
+      for (const child of depNode.leaves) {
+        treeNode.children!.push(processNode(child));
+      }
+
+      return treeNode;
+    };
+
+    // build tree
+    const [depTree] = this.runner.buildDependencyTree(ns);
+    return formatTree(processNode(depTree), {
       guideFormat: chalk.dim,
       extraSplit: chalk.dim(' | ')
     });

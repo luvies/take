@@ -28,6 +28,10 @@ export interface CliArgs {
    */
   listTargets: boolean;
   /**
+   * The target to display the dependency tree of.
+   */
+  deps?: string;
+  /**
    * The directory to use as the working directory while running Take.
    */
   cwd?: string;
@@ -78,6 +82,13 @@ export async function processArgs(): Promise<CliArgs> {
       action: 'storeTrue',
       defaultValue: false,
       dest: 'listTargets'
+    }
+  );
+  parser.addArgument(
+    ['--deps'],
+    {
+      help: 'Displays the dependency tree of a given target',
+      metavar: 'TARGET'
     }
   );
   parser.addArgument(

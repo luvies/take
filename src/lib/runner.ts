@@ -3,7 +3,7 @@ import { Namespace } from './namespace';
 import { TakeError } from './take-error';
 import { Target, TargetBatch } from './target';
 
-interface DependencyNode {
+export interface DependencyNode {
   /**
    * The resolved name of the target.
    */
@@ -52,43 +52,6 @@ export class Runner {
   }
 
   /**
-   * Executes a node.
-   * Will execute its dependencies first, taking into account whether the node's
-   * task config wanted it to be in parallel or not.
-   *
-   * @param node The node to execute.
-   * @param args The argument to pass to the node's target.
-   */
-  private async execNode(node: DependencyNode): Promise<void> {
-    // if we shouldn't execute this node, don't
-    if (!node.execute) {
-      return;
-    }
-
-    // if we have any leaves, execute them according to the task config
-    if (node.leaves) {
-      if (node.target.parallelDeps) {
-        // execute the leaves in parallel
-        const deps: Array<Promise<void>> = [];
-        for (const leaf of node.leaves) {
-          deps.push(this.execNode(leaf));
-        }
-
-        // wait for all to complete
-        await Promise.all(deps);
-      } else {
-        // execute the leaves in sequence
-        for (const leaf of node.leaves) {
-          await this.execNode(leaf);
-        }
-      }
-    }
-
-    // now the dependencies are done, execute the node itself
-    await node.target.execute(node.args);
-  }
-
-  /**
    * Constructs the dependency tree. It will take into account multiple occurences
    * of a target and not process them fully.
    *
@@ -98,7 +61,7 @@ export class Runner {
    * @param foundTargets The hashmap of found dependencies. Used to ignore dupilcates.
    * @returns The fully constructed node.
    */
-  private buildDependencyTree(
+  public buildDependencyTree(
     ns: Namespace, parent?: Namespace,
     path: Namespace[] = [], foundTargets: Record<string, boolean> = {}
   ): [DependencyNode, boolean] {
@@ -155,6 +118,43 @@ export class Runner {
 
     // return complete node
     return [node, safe];
+  }
+
+  /**
+   * Executes a node.
+   * Will execute its dependencies first, taking into account whether the node's
+   * task config wanted it to be in parallel or not.
+   *
+   * @param node The node to execute.
+   * @param args The argument to pass to the node's target.
+   */
+  private async execNode(node: DependencyNode): Promise<void> {
+    // if we shouldn't execute this node, don't
+    if (!node.execute) {
+      return;
+    }
+
+    // if we have any leaves, execute them according to the task config
+    if (node.leaves) {
+      if (node.target.parallelDeps) {
+        // execute the leaves in parallel
+        const deps: Array<Promise<void>> = [];
+        for (const leaf of node.leaves) {
+          deps.push(this.execNode(leaf));
+        }
+
+        // wait for all to complete
+        await Promise.all(deps);
+      } else {
+        // execute the leaves in sequence
+        for (const leaf of node.leaves) {
+          await this.execNode(leaf);
+        }
+      }
+    }
+
+    // now the dependencies are done, execute the node itself
+    await node.target.execute(node.args);
   }
 
   /**
