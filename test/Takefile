@@ -48,13 +48,36 @@ module.exports = async (take) => {
           desc: 'target 5 child 1',
           execute() {
             console.log(this.desc, this);
+          },
+          children: {
+            test1: {
+              desc: 'target5:child1:test1',
+            },
+            test2: {
+              desc: 'target5:child1:test2'
+            }
           }
+        },
+        test: {
+          desc: 'target5:test'
         }
       }
     },
     target6: {
       execute() {
         console.log(take);
+      },
+      children: {
+        child1: {
+          children: {
+            test1: {
+              desc: 'target6:child1:test1'
+            },
+            test2: {
+              desc: 'target6:child1:test2'
+            }
+          }
+        }
       }
     },
     default: {
@@ -111,6 +134,9 @@ module.exports = async (take) => {
           execute() {
             take.error('test error', new Error('internal error'));
           }
+        },
+        test: {
+          desc: 'crash:test'
         }
       }
     }

@@ -33,14 +33,12 @@ module.exports = (take) => {
               'ts-node',
               [
                 '-P', '../tsconfig.json',
-                '-O', '{ "declarationMap": false }',
                 '../src/bin/cli.ts', ...args
               ],
               {
                 echo: false,
                 spawn: {
-                  cwd: join(__dirname, './test'),
-                  shell: false
+                  cwd: join(__dirname, 'test')
                 }
               }
             );

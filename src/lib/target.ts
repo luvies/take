@@ -58,10 +58,8 @@ export class Target {
    */
   public static processTaskConfig(config: TargetConfigBatch, env: Environment): TargetBatch {
     const targets: TargetBatch = {};
-    for (const name in config) {
-      if (config.hasOwnProperty(name)) {
-        targets[name] = new Target(name, config[name], env);
-      }
+    for (const name of Object.keys(config)) {
+      targets[name] = new Target(name, config[name], env);
     }
     return targets;
   }
@@ -76,7 +74,7 @@ export class Target {
   public children: TargetBatch;
 
   public constructor(
-    name: string,
+    public name: string,
     private config: TargetConfig,
     private env: Environment,
     containingNamespace?: string
@@ -106,10 +104,8 @@ export class Target {
     this.children = {};
     if (config.children) {
       const fullName: string = containingNamespace ? env.ns.join(containingNamespace, name) : name;
-      for (const child in config.children) {
-        if (config.children.hasOwnProperty) {
-          this.children[child] = new Target(child, config.children[child], env, fullName);
-        }
+      for (const child of Object.keys(config.children)) {
+        this.children[child] = new Target(child, config.children[child], env, fullName);
       }
     }
   }
@@ -126,6 +122,10 @@ export class Target {
    */
   public get parallelDeps(): boolean {
     return this.config.parallelDeps as boolean;
+  }
+
+  public get executes(): boolean {
+    return !!this.config.execute;
   }
 
   /**

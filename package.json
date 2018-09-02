@@ -11,7 +11,9 @@
   "repository": "https://github.com/luvies/take",
   "dependencies": {
     "argparse": "^1.0.10",
+    "chalk": "^2.4.1",
     "deepmerge": "^2.1.1",
+    "string-length": "^2.0.0",
     "typescript": "^3.0.1"
   },
   "devDependencies": {
