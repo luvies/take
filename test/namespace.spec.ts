@@ -1,149 +1,245 @@
 import { expect } from 'chai';
 import 'mocha';
+import { Environment } from '../src/lib/environment';
 import { Namespace } from '../src/lib/namespace';
-import { DefaultOptions, Options } from '../src/lib/options';
+import { DefaultOptions } from '../src/lib/options';
 
 describe('Namespace', function(this) {
-  let opts: Options;
-  let ns: Namespace;
+  let env: Environment;
 
-  function initEach() {
-    opts = DefaultOptions();
-    ns = new Namespace(opts);
-  }
-
-  describe('#join', function(this) {
-    beforeEach(initEach);
-
-    it('should return an empty string when nothing is passed in', function(this) {
-      expect(ns.join()).to.be.empty;
-    });
-
-    it('should return a single item as-is', function(this) {
-      expect(ns.join('target1')).to.be.equal('target1');
-      expect(ns.join('target2')).to.be.equal('target2');
-      expect(ns.join('target3')).to.be.equal('target3');
-    });
-
-    it('should join items that are pure namespace names', function(this) {
-      expect(ns.join('target1', 'target2')).to.be.equal('target1:target2');
-      expect(ns.join('target1', 'target2', 'target3')).to.be.equal('target1:target2:target3');
-      expect(ns.join('target1', 'target2', 'target3', 'target4')).to.be.equal('target1:target2:target3:target4');
-    });
-
-    it('should respect leading namespace separator', function(this) {
-      expect(ns.join(':target1')).to.be.equal(':target1');
-      expect(ns.join(':target1', 'target2')).to.be.equal(':target1:target2');
-      expect(ns.join(':target1', 'target2', 'target3')).to.be.equal(':target1:target2:target3');
-    })
-
-    it('should strip in-between and trailing namespace separator', function(this) {
-      expect(ns.join('target1:', 'target2')).to.be.equal('target1:target2');
-      expect(ns.join('target1:', 'target2', 'target3')).to.be.equal('target1:target2:target3');
-      expect(ns.join('target1:', ':target2')).to.be.equal('target1:target2');
-      expect(ns.join('target1:', ':target2:', ':target3')).to.be.equal('target1:target2:target3');
-      expect(ns.join(':target1:', 'target2')).to.be.equal(':target1:target2');
-      expect(ns.join(':target1:', ':target2')).to.be.equal(':target1:target2');
-      expect(ns.join(':target1:', ':target2:', 'target3')).to.be.equal(':target1:target2:target3');
-    });
-
-    it('should respect the configured namespace separator', function(this) {
-      opts.namespaceSeparator = '/';
-      expect(ns.join('target1', 'target2')).to.be.equal('target1/target2');
-      opts.namespaceSeparator = ';';
-      expect(ns.join('target1', 'target2')).to.be.equal('target1;target2');
-      opts.namespaceSeparator = '|';
-      expect(ns.join('target1', 'target2')).to.be.equal('target1|target2');
-    })
+  beforeEach(function(this) {
+    env = new Environment(DefaultOptions());
   });
 
-  describe('#split', function(this) {
-    beforeEach(initEach);
+  describe('#getRoot', function(this) {
+    it('should return a namespace with no path or arguments', function(this) {
+      const ns = Namespace.getRoot(env);
 
-    it('should return a single item as-is', function(this) {
-      expect(ns.split('target1')).to.be.eql(['target1']);
-      expect(ns.split('target2')).to.be.eql(['target2']);
-      expect(ns.split('target3')).to.be.eql(['target3']);
-    });
-
-    it('should split items properly', function(this) {
-      expect(ns.split('target1:target2')).to.be.eql(['target1', 'target2']);
-      expect(ns.split('target1:target2:target3')).to.be.eql(['target1', 'target2', 'target3']);
-      expect(ns.split('target1:target2:target3:target4')).to.be.eql(['target1', 'target2', 'target3', 'target4']);
-    });
-
-    it('should preserve leading namespace separator', function(this) {
-      expect(ns.split(':target1')).to.be.eql(['', 'target1']);
-      expect(ns.split(':target1:target2')).to.be.eql(['', 'target1', 'target2']);
-      expect(ns.split(':target1:target2:target3')).to.be.eql(['', 'target1', 'target2', 'target3']);
-    });
-
-    it('should strip trailing namespace operator', function(this) {
-      expect(ns.split('target1:')).to.be.eql(['target1']);
-      expect(ns.split('target1:target2:')).to.be.eql(['target1', 'target2']);
-      expect(ns.split('target1:target2:target3:')).to.be.eql(['target1', 'target2', 'target3']);
-    });
-
-    it('should respect the configured namespace separator', function(this) {
-      expect(ns.split('target1:target2/target3|target4')).to.be.eql(['target1', 'target2/target3|target4']);
-      opts.namespaceSeparator = '/';
-      expect(ns.split('target1:target2/target3|target4')).to.be.eql(['target1:target2', 'target3|target4']);
-      opts.namespaceSeparator = '|';
-      expect(ns.split('target1:target2/target3|target4')).to.be.eql(['target1:target2/target3', 'target4']);
+      expect(ns.names).to.be.eql([]);
+      expect(ns.args).to.be.eql([]);
     });
   });
 
-  describe('#extractArgs', function(this) {
-    it('should return an argument-less target unchanged and with and empty list', function(this) {
-      expect(ns.extractArgs('target1')).to.be.eql(['target1', []]);
-      expect(ns.extractArgs('target2')).to.be.eql(['target2', []]);
-      expect(ns.extractArgs('target3')).to.be.eql(['target3', []]);
+  describe('#parent', function(this) {
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      root = Namespace.getRoot(env);
     });
 
-    it('should leave namespace separators intact', function(this) {
-      expect(ns.extractArgs('target1:target2')).to.be.eql(['target1:target2', []]);
-      expect(ns.extractArgs('target1:target2:target3')).to.be.eql(['target1:target2:target3', []]);
-      expect(ns.extractArgs('target1:target2:target3:')).to.be.eql(['target1:target2:target3:', []]);
-    });
-
-    it('should return a single empty string for the arguments if given nothing between the brackets', function(this) {
-      expect(ns.extractArgs('target1[]')).to.be.eql(['target1', ['']]);
-      expect(ns.extractArgs('target1:target2[]')).to.be.eql(['target1:target2', ['']]);
-      expect(ns.extractArgs('target1:target2:target3[]')).to.be.eql(['target1:target2:target3', ['']]);
-      expect(ns.extractArgs('target1:target2:[]')).to.be.eql(['target1:target2:', ['']]);
-      expect(ns.extractArgs('target1:target2:target3:[]')).to.be.eql(['target1:target2:target3:', ['']]);
-    });
-
-    it('should extract the arguments from the target', function(this) {
-      expect(ns.extractArgs('target1[arg1]')).to.be.eql(['target1', ['arg1']]);
-      expect(ns.extractArgs('target2[arg1,arg2]')).to.be.eql(['target2', ['arg1', 'arg2']]);
-      expect(ns.extractArgs('target3[arg1,arg2,arg3]')).to.be.eql(['target3', ['arg1', 'arg2', 'arg3']]);
-      expect(ns.extractArgs('target4[arg1,arg2,arg3]')).to.be.eql(['target4', ['arg1', 'arg2', 'arg3']]);
-      expect(ns.extractArgs('target5[arg1,arg2,arg3]')).to.be.eql(['target5', ['arg1', 'arg2', 'arg3']]);
-      expect(ns.extractArgs('target6[arg1,arg2,arg3]')).to.be.eql(['target6', ['arg1', 'arg2', 'arg3']]);
-    });
-
-    it('should preserve spaces in arguments', function(this) {
-      expect(ns.extractArgs('target1[arg1 ]')).to.be.eql(['target1', ['arg1 ']]);
-      expect(ns.extractArgs('target2[ arg1 ]')).to.be.eql(['target2', [' arg1 ']]);
-      expect(ns.extractArgs('target3[arg1, arg2]')).to.be.eql(['target3', ['arg1', ' arg2']]);
-      expect(ns.extractArgs('target4[arg1,arg2 , arg3]')).to.be.eql(['target4', ['arg1', 'arg2 ', ' arg3']]);
-    });
-
-    it('should return undefined on a badly given target', function(this) {
-      // the brackets are the only things that are searched for,
-      // so excluding them in any capacity is allowed
-      expect(ns.extractArgs('target1[')).to.be.undefined;
-      expect(ns.extractArgs('target1]')).to.be.undefined;
-      expect(ns.extractArgs('target1[][]')).to.be.undefined;
-      expect(ns.extractArgs('target1[]]')).to.be.undefined;
-      expect(ns.extractArgs('target1[[]')).to.be.undefined;
-      expect(ns.extractArgs('target1[   []    ]')).to.be.undefined;
-      expect(ns.extractArgs('target1[arg1')).to.be.undefined;
-      expect(ns.extractArgs('target1 arg1]')).to.be.undefined;
-      expect(ns.extractArgs('target1[    [arg1]   ]')).to.be.undefined;
-      expect(ns.extractArgs('target1[ arg1    ]]')).to.be.undefined;
-      expect(ns.extractArgs('target1][')).to.be.undefined;
+    it('should return itself if it is the root', function(this) {
+      expect(root.parent).to.be.equal(root);
     })
+
+    it('should return the next namespace up', function(this) {
+      expect(root.resolve('target1').parent.toString()).to.be.equal(root.toString());
+      expect(root.resolve('target1:target2').parent.toString())
+        .to.be.equal(root.resolve('target1').toString());
+      expect(root.resolve('target1:target2:target3').parent.toString())
+        .to.be.equal(root.resolve('target1:target2').toString());
+      expect(root.resolve('target1:target2:target3:target4').parent.toString())
+        .to.be.equal(root.resolve('target1:target2:target3').toString());
+    });
+  });
+
+  describe('#isRoot', function(this) {
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      root = Namespace.getRoot(env);
+    });
+
+    it('should return true for root namespace', function(this) {
+      expect(root.isRoot).to.be.true;
+    });
+
+    it('should return false for non-root namespace', function(this) {
+      expect(root.resolve('target1').isRoot).to.be.false;
+      expect(root.resolve('target1:target2').isRoot).to.be.false;
+      expect(root.resolve('target1:target2:target3').isRoot).to.be.false;
+    });
+  });
+
+  describe('#names', function(this) {
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      root = Namespace.getRoot(env);
+    });
+
+    it('should return an empty list for root', function(this) {
+      expect(root.names).to.be.eql([]);
+    });
+
+    it('should return a list of names', function(this) {
+      expect(root.resolve('target1').names).to.be.eql(['target1']);
+      expect(root.resolve('target1:target2').names).to.be.eql(['target1', 'target2']);
+      expect(root.resolve('target1:target2:target3').names).to.be.eql(['target1', 'target2', 'target3']);
+    });
+  });
+
+  describe('#resolve', function(this) {
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      root = Namespace.getRoot(env);
+    });
+
+    it('should chain', function(this) {
+      expect(root.resolve('target1').resolve('target2').toString())
+        .to.be.equal(':target1:target2');
+      expect(root.resolve('target1').resolve('target2').resolve('target3').toString())
+        .to.be.equal(':target1:target2:target3');
+      expect(root.resolve('target1').resolve('target2').resolve('target3').resolve('target4').toString())
+        .to.be.equal(':target1:target2:target3:target4');
+    })
+
+    it('should resolve to itself if empty string passed in', function(this) {
+      expect(root.resolve('').toString()).to.be.equal(':');
+      expect(root.resolve('target1').resolve('').toString()).to.be.equal(':target1');
+      expect(root.resolve('target1:target2').resolve('').toString()).to.be.equal(':target1:target2');
+      expect(root.resolve('target1:target2:target3').resolve('').toString()).to.be.equal(':target1:target2:target3');
+    });
+
+    it('should use given working namespace', function(this) {
+      let ns = root.resolve('ns');
+      expect(root.resolve('target1', ns).toString()).to.be.equal(':ns:target1');
+      expect(root.resolve('target1:target2', ns).toString()).to.be.equal(':ns:target1:target2');
+      expect(root.resolve('target1:target2:target3', ns).toString()).to.be.equal(':ns:target1:target2:target3');
+    });
+
+    it('should respect absolute namespaces', function(this) {
+      expect(root.resolve(':target1').toString()).to.be.equal(':target1');
+      expect(root.resolve(':target1:target2').toString()).to.be.equal(':target1:target2');
+      expect(root.resolve(':target1:target2:target3').toString()).to.be.equal(':target1:target2:target3');
+
+      let ns = root.resolve('ns');
+      expect(root.resolve(':target1', ns).toString()).to.be.equal(':target1');
+      expect(root.resolve(':target1:target2', ns).toString()).to.be.equal(':target1:target2');
+      expect(root.resolve(':target1:target2:target3', ns).toString()).to.be.equal(':target1:target2:target3');
+    });
+
+    it('should resolve parent directives', function(this) {
+      expect(root.resolve('target1:^').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:^').toString()).to.be.equal(':target1');
+      expect(root.resolve('target1:^:target2').toString()).to.be.equal(':target2');
+      expect(root.resolve('target1:target2:^:^').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:^:^:target3').toString()).to.be.equal(':target3');
+      expect(root.resolve('target1:target2:^:^:target3:^').toString()).to.be.equal(':');
+    });
+
+    it('should return the root if a parent directive resolves to above', function(this) {
+      expect(root.resolve('^').toString()).to.be.equal(':');
+      expect(root.resolve('^:^').toString()).to.be.equal(':');
+      expect(root.resolve('^:^:^').toString()).to.be.equal(':');
+      expect(root.resolve('target1:^:^').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:^:^:^').toString()).to.be.equal(':');
+      expect(root.resolve('target1:^:target2:target3:^:^:^').toString()).to.be.equal(':');
+    });
+  });
+
+  describe('#resolve', function(this) {
+    let env: Environment;
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      env = new Environment(DefaultOptions());
+      root = Namespace.getRoot(env);
+    });
+
+    it('should respect alternate namespace separators', function(this) {
+      env.options.namespaceSeparator = '/';
+      expect(root.resolve('target1').resolve('target2').toString())
+        .to.be.equal('/target1/target2');
+      expect(root.resolve('target1').resolve('target2').resolve('target3').toString())
+        .to.be.equal('/target1/target2/target3');
+      expect(root.resolve('target1').resolve('target2').resolve('target3').resolve('target4').toString())
+        .to.be.equal('/target1/target2/target3/target4');
+      expect(root.resolve('target1').toString()).to.be.equal('/target1');
+      expect(root.resolve('target1/target2').toString()).to.be.equal('/target1/target2');
+      expect(root.resolve('target1/target2/target3').toString()).to.be.equal('/target1/target2/target3');
+      expect(root.resolve('target1/target2:target3').toString()).to.be.equal('/target1/target2:target3');
+
+      env.options.namespaceSeparator = '-';
+      expect(root.resolve('target1').resolve('target2').toString())
+        .to.be.equal('-target1-target2');
+      expect(root.resolve('target1').resolve('target2').resolve('target3').toString())
+        .to.be.equal('-target1-target2-target3');
+      expect(root.resolve('target1').resolve('target2').resolve('target3').resolve('target4').toString())
+        .to.be.equal('-target1-target2-target3-target4');
+      expect(root.resolve('target1').toString()).to.be.equal('-target1');
+      expect(root.resolve('target1-target2').toString()).to.be.equal('-target1-target2');
+      expect(root.resolve('target1-target2-target3').toString()).to.be.equal('-target1-target2-target3');
+      expect(root.resolve('target1-target2:target3').toString()).to.be.equal('-target1-target2:target3');
+    });
+
+    it('should respect alternate parent directives', function(this) {
+      env.options.namespaceParent = '..';
+      expect(root.resolve('target1:..').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:..').toString()).to.be.equal(':target1');
+      expect(root.resolve('target1:..:target2').toString()).to.be.equal(':target2');
+      expect(root.resolve('target1:target2:..:..').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:..:..:target3').toString()).to.be.equal(':target3');
+      expect(root.resolve('target1:target2:..:..:target3:..').toString()).to.be.equal(':');
+
+      env.options.namespaceParent = '|';
+      expect(root.resolve('target1:|').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:|').toString()).to.be.equal(':target1');
+      expect(root.resolve('target1:|:target2').toString()).to.be.equal(':target2');
+      expect(root.resolve('target1:target2:|:|').toString()).to.be.equal(':');
+      expect(root.resolve('target1:target2:|:|:target3').toString()).to.be.equal(':target3');
+      expect(root.resolve('target1:target2:|:|:target3:|').toString()).to.be.equal(':');
+    });
+  })
+
+  describe('#equalTo', function(this) {
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      root = Namespace.getRoot(env);
+    });
+
+    it('should return true for equal namespaces', function(this) {
+      expect(root.equalTo(root)).to.be.true;
+      expect(root.resolve('target1').equalTo(root.resolve('target1'))).to.be.true;
+      expect(root.resolve('target1:target2').equalTo(root.resolve('target1:target2'))).to.be.true;
+      expect(root.resolve('target1:target2:target3').equalTo(root.resolve('target1:target2:target3'))).to.be.true;
+    });
+  });
+
+  describe('#toString', function(this) {
+    let root: Namespace;
+
+    beforeEach(function(this) {
+      root = Namespace.getRoot(env);
+    });
+
+    it('should return a full qualified namespace string', function(this) {
+      expect(root.toString()).to.be.equal(':');
+      expect(root.resolve('target1').toString()).to.be.equal(':target1');
+      expect(root.resolve('target2').toString()).to.be.equal(':target2');
+      expect(root.resolve('target3').toString()).to.be.equal(':target3');
+      expect(root.resolve('target1:target2').toString()).to.be.equal(':target1:target2');
+      expect(root.resolve('target2:target3').toString()).to.be.equal(':target2:target3');
+      expect(root.resolve('target3:target4').toString()).to.be.equal(':target3:target4');
+      expect(root.resolve('target1:target2:target3').toString()).to.be.equal(':target1:target2:target3');
+      expect(root.resolve('target2:target3:target4').toString()).to.be.equal(':target2:target3:target4');
+      expect(root.resolve('target3:target4:target5').toString()).to.be.equal(':target3:target4:target5');
+    });
+
+    it('should return a full qualified namespace string with arguments', function(this) {
+      expect(root.resolve('target1').toString(true)).to.be.equal(':target1');
+      expect(root.resolve('target2[]').toString(true)).to.be.equal(':target2[]');
+      expect(root.resolve('target3[a]').toString(true)).to.be.equal(':target3[a]');
+      expect(root.resolve('target1[a,b]').toString(true)).to.be.equal(':target1[a,b]');
+      expect(root.resolve('target2[a,b,c]').toString(true)).to.be.equal(':target2[a,b,c]');
+      expect(root.resolve('target3[a,b, c]').toString(true)).to.be.equal(':target3[a,b, c]');
+      expect(root.resolve('target1:target2').toString(true)).to.be.equal(':target1:target2');
+      expect(root.resolve('target2:target3[]').toString(true)).to.be.equal(':target2:target3[]');
+      expect(root.resolve('target3:target4[a]').toString(true)).to.be.equal(':target3:target4[a]');
+      expect(root.resolve('target1:target2[a,b]').toString(true)).to.be.equal(':target1:target2[a,b]');
+      expect(root.resolve('target2:target3[a,b,c]').toString(true)).to.be.equal(':target2:target3[a,b,c]');
+      expect(root.resolve('target3:target4[a,b, c]').toString(true)).to.be.equal(':target3:target4[a,b, c]');
+    });
   });
 });

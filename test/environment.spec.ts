@@ -9,7 +9,7 @@ describe('Environment', function(this) {
     const env = new Environment(DefaultOptions());
 
     expect(env).to.be.instanceOf(Environment);
-    expect(env.ns).to.be.instanceOf(Namespace);
+    expect(env.root).to.be.instanceOf(Namespace);
     expect(env.options).to.have.same.keys(DefaultOptions());
   })
 });
