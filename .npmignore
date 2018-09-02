@@ -1,6 +1,7 @@
 .vscode/
 src/
 test/
+types/
 .editorconfig
 tsconfig.json
 tslint.json
