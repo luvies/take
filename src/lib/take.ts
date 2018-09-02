@@ -7,7 +7,7 @@ import { Loader } from './loader';
 import { DefaultOptions, Options } from './options';
 import { Runner } from './runner';
 import * as fsp from './shims/fsp';
-import { DefaultTaskTarget, Target, TargetBatch, TargetConfigBatch } from './target';
+import { Target, TargetBatch, TargetConfigBatch } from './target';
 import { Utils } from './utils';
 
 export interface CliEnv {
@@ -98,7 +98,7 @@ export class Take {
       // if no target was given, attempt to run the default target
       // if it doesn't exist, then the user has likely done something wrong
       if (!args.targets.length) {
-        names.push(DefaultTaskTarget);
+        names.push(env.root.toString());
       }
 
       // run Take with the given arguments while tracking execution time
@@ -175,7 +175,7 @@ export class Take {
   public async run(names: string[]): Promise<void> {
     // execute the targets against the tasks
     for (const name of names) {
-      await this.runner.execute(name);
+      await this.runner.execute(this.env.root.resolve(name));
     }
   }
 

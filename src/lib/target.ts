@@ -1,7 +1,6 @@
 import { Environment } from './environment';
+import { Namespace } from './namespace';
 import { TakeError } from './take-error';
-
-export const DefaultTaskTarget = 'default';
 
 /**
  * A batch of task configs.
@@ -36,6 +35,11 @@ export interface TargetConfig {
    */
   depParent?: boolean;
   /**
+   * This is set by Take when building the targets, so execute() can dynamically
+   * call targets using the current namespace.
+   */
+  ns?: Namespace;
+  /**
    * The function used to perform the task.
    */
   execute?(...args: string[]): void | Promise<void>;
@@ -67,7 +71,7 @@ export class Target {
   /**
    * The tasks target dependencies.
    */
-  public deps: string[];
+  public deps: Namespace[] = [];
   /**
    * The child tasks.
    */
@@ -76,36 +80,58 @@ export class Target {
   public constructor(
     public name: string,
     private config: TargetConfig,
-    private env: Environment,
-    containingNamespace?: string
+    env: Environment,
+    path?: Namespace
   ) {
-    // if the task name has the namespace separator in, error, since it's not allowed
-    if (name.indexOf(env.options.namespaceSeparator) >= 0) {
-      throw new TakeError(env, 'Task name cannot have the namespace separator in');
+    // make sure we have a path
+    path = path || env.root;
+
+    // validate target name
+    if (!path.isRoot && !name) {
+      throw new TakeError(env, 'Empty target name not allowed other than in root config');
+    }
+    if (name.includes(env.options.namespaceSeparator)) {
+      throw new TakeError(env, `Target '${name}' cannot have the namespace separator in`);
+    }
+    if (name === env.options.namespaceParent) {
+      throw new TakeError(env, `'${env.options.namespaceParent} is not allowed as a target name`);
     }
 
-    // convert the given deps config into an array
-    if (Array.isArray(config.deps)) {
-      this.deps = config.deps;
-    } else {
-      this.deps = [];
-      if (config.deps) {
-        this.deps.push(config.deps);
-      }
-    }
+    // get the base namespace to work dependencies off
+    const baseNs = env.options.allDepsAbsolute ? env.root : path.resolve(name);
 
     // if this task depends on its parent, add it
     // ignore if this is in the root namespace
-    if (containingNamespace && config.depParent) {
-      this.deps.unshift(containingNamespace);
+    if (!path.isRoot && config.depParent) {
+      this.deps.push(baseNs.resolve(env.options.namespaceParent));
     }
+
+    // convert the given deps config into an array
+    let givenDeps: string[];
+    if (Array.isArray(config.deps)) {
+      givenDeps = config.deps;
+    } else {
+      givenDeps = [];
+      if (typeof config.deps !== 'undefined') {
+        givenDeps.push(config.deps);
+      }
+    }
+    for (const dep of givenDeps) {
+      if (dep === '') {
+        throw new TakeError(env, 'Dependency cannot be an empty string');
+      }
+      this.deps.push(baseNs.resolve(dep));
+    }
+
+    // store the current namespace in the config object, so that the executor can
+    // access it via this.ns
+    config.ns = path;
 
     // build the children tasks
     this.children = {};
     if (config.children) {
-      const fullName: string = containingNamespace ? env.ns.join(containingNamespace, name) : name;
       for (const child of Object.keys(config.children)) {
-        this.children[child] = new Target(child, config.children[child], env, fullName);
+        this.children[child] = new Target(child, config.children[child], env, path.resolve(name));
       }
     }
   }

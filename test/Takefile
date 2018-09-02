@@ -7,6 +7,9 @@ module.exports = async (take) => {
   await take.exec('echo init');
 
   return {
+    '': {
+      desc: 'empty'
+    },
     target1: {
       desc: 'target 1',
       async execute() {
@@ -17,7 +20,7 @@ module.exports = async (take) => {
     },
     target2: {
       desc: 'target 2',
-      deps: 'target1',
+      deps: ':target1',
       async execute() {
         console.log(this.desc);
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -26,14 +29,14 @@ module.exports = async (take) => {
     },
     target3: {
       desc: 'target 3',
-      deps: ['target1', 'target2'],
+      deps: [':target1', ':target2'],
       execute() {
         console.log(this.desc);
       }
     },
     target4: {
       desc: 'target 4',
-      deps: ['target1', 'target2'],
+      deps: [':target1', ':target2'],
       parallelDeps: true,
       execute() {
         console.log(this.desc);
@@ -55,7 +58,50 @@ module.exports = async (take) => {
               desc: 'target5:child1:test1',
             },
             test2: {
-              desc: 'target5:child1:test2'
+              desc: 'target5:child1:test2',
+              execute() {
+                console.log(this.desc);
+              }
+            },
+            test3: {
+              deps: '^',
+              desc: 'target5:child1:test3'
+            },
+            test4: {
+              deps: '^:test2',
+              desc: 'target5:child1:test3'
+            },
+            test5: {
+              deps: '^:^:child1',
+              desc: 'target5:child1:test3'
+            },
+            test6: {
+              deps: '^:^:',
+              desc: 'target5:child1:test3'
+            },
+            test7: {
+              deps: '^:^:^:target2',
+              desc: 'target5:child1:test3'
+            },
+            test8: {
+              deps: '^:^:^:^:target2',
+              desc: 'target5:child1:test3'
+            },
+            test9: {
+              deps: '^:test10',
+              desc: 'target5:child1:test3'
+            },
+            test10: {
+              deps: '^:test9',
+              desc: 'target5:child1:test3'
+            },
+            test11: {
+              deps: '^:test11',
+              desc: 'target5:child1:test3'
+            },
+            test12: {
+              deps: [''],
+              desc: 'target5:child1:test3'
             }
           }
         },
@@ -87,13 +133,13 @@ module.exports = async (take) => {
       }
     },
     target7: {
-      deps: 'target8',
+      deps: ':target8',
       execute() {
         console.log(this.desc);
       }
     },
     target8: {
-      deps: 'target7',
+      deps: ':target7',
       execute() {
         console.log(this.desc);
       }
@@ -112,7 +158,7 @@ module.exports = async (take) => {
       }
     },
     echo2: {
-      deps: 'echo[test,dep]'
+      deps: ':echo[test,dep]'
     },
     'echo-test': {
       async execute() {

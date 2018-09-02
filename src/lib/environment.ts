@@ -4,7 +4,7 @@ import { Options } from './options';
 import { Utils } from './utils';
 
 export class Environment {
-  public ns: Namespace;
+  public root: Namespace;
   public utils: Utils;
   public config: {
     suppress: SuppressOptions[],
@@ -16,7 +16,7 @@ export class Environment {
   public constructor(
     public options: Options
   ) {
-    this.ns = new Namespace(options);
+    this.root = Namespace.getRoot(this);
     this.utils = new Utils(this);
   }
 }

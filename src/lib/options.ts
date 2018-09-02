@@ -70,6 +70,15 @@ export interface Options {
    */
   namespaceSeparator: string;
   /**
+   * The character used to refer to the namespace's containing namespace
+   * (i.e. the target's parent).
+   * @default '^'
+   * @example
+   * ':target1:target2:target3:^' === ':target1:target2'
+   * ':target1:target2:target3:^:^' === ':target1'
+   */
+  namespaceParent: string;
+  /**
    * The default options used for executing commands using the shell utility function.
    * These also apply to exec and its variations unless otherwise stated.
    */
@@ -80,12 +89,21 @@ export interface Options {
    * @default process.stdout.isTTY && process.platform === 'darwin'
    */
   emojis: boolean;
+  /**
+   * Whether all dependencies are resolved as if they are absolute dependencies
+   * (i.e. they all have the namespace separator prefixed automatically).
+   * WARNING: This will mean that you will *not* be able to use relative dependencies at all.
+   * @default false
+   */
+  allDepsAbsolute: boolean;
 }
 
 export function DefaultOptions(): Options {
   return {
     namespaceSeparator: ':',
+    namespaceParent: '^',
     shell: merge({}, DefaultShellOptions),
-    emojis: !!process.stdout.isTTY && process.platform === 'darwin'
+    emojis: !!process.stdout.isTTY && process.platform === 'darwin',
+    allDepsAbsolute: false
   };
 }
