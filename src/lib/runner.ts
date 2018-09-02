@@ -102,11 +102,6 @@ export class Runner {
     // build leaves
     if (node.target.deps) {
       for (const dep of node.target.deps) {
-        // make sure the dependency is valid
-        if (dep.isRoot) {
-          throw new TakeError(this.env, `${dep} is not a valid dependency`);
-        }
-
         // if we should, build the dependencies
         if (node.execute && !node.cyclic) {
           const [depNode, depSafe] = this.buildDependencyTree(dep, ns, path, foundTargets);

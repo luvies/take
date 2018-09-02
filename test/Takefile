@@ -193,7 +193,8 @@ module.exports = async (take) => {
         ':echo2',
         'internal',
         ':crash:test',
-        ':target3'
+        ':target3',
+        ':'
       ],
       children: {
         internal: {
