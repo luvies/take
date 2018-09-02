@@ -20,7 +20,7 @@ Take.runFromCli(clienv).catch(err => {
   // and exit codes of 3 mean Take crashed
   if (TakeError.isTakeError(err)) {
     // if a TakeError was thrown, then it was intentional
-    err.log();
+    err.log(clienv.trace);
     process.exitCode = 1;
   } else {
     logError(clienv.env, 'Unhandled exception, execution aborted');

@@ -105,6 +105,13 @@ module.exports = async (take) => {
     crash: {
       execute() {
         throw new Error('test error');
+      },
+      children: {
+        take: {
+          execute() {
+            take.error('test error', new Error('internal error'));
+          }
+        }
       }
     }
   };

@@ -16,15 +16,22 @@ export class TakeError extends Error {
 
   public constructor(
     private env: Environment,
-    ...messages: any[]
+    message: any,
+    public internalError?: Error | string
   ) {
-    super(messages.join(' '));
+    super(message);
   }
 
   /**
    * Outputs the error message to the console.
+   *
+   * @param outputInternal Whether to also output the internal error if it was given.
    */
-  public log() {
+  public log(outputInternal: boolean = true) {
     this.env.utils.logError('Error:', this.message);
+    if (outputInternal && this.internalError) {
+      this.env.utils.logError('Internal error:');
+      this.env.utils.logError(this.internalError);
+    }
   }
 }

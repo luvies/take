@@ -52,6 +52,18 @@ export class Utils {
   }
 
   /**
+   * Raises an error that cancels all target execution and displays the
+   * message to console. If trace is enabled, the internal error (if it
+   * was given) is also displayed.
+   *
+   * @param message The message to display to the console.
+   * @param internalError The error string or object that caused the error.
+   */
+  public error(message: string, internalError?: Error | string) {
+    throw new TakeError(this.__env, message, internalError);
+  }
+
+  /**
    * Executes a given command, respecting `shellOptions.echo`.
    */
   public exec(...cmd: string[]): Promise<number> {
@@ -138,7 +150,7 @@ export class Utils {
           if (code === 0) {
             resolve(code);
           } else {
-            reject(new TakeError(this.__env, 'Target execution aborted: process exited with code', code));
+            reject(new TakeError(this.__env, `Target execution aborted: process exited with code ${code}`));
           }
         } else {
           // otherwise just resolve regardless
