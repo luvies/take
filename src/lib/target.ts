@@ -104,7 +104,7 @@ export class Target {
       throw new TakeError(env, `Target '${name}' cannot have the namespace separator in`);
     }
     if (name === env.options.namespaceParent) {
-      throw new TakeError(env, `'${env.options.namespaceParent} is not allowed as a target name`);
+      throw new TakeError(env, `'${env.options.namespaceParent}' is not allowed as a target name`);
     }
 
     // get the base namespace to work dependencies off
