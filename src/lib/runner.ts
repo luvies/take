@@ -1,13 +1,13 @@
 import { Environment } from './environment';
 import { Namespace } from './namespace';
 import { TakeError } from './take-error';
-import { Target, TargetBatch } from './target';
+import { RootTargetIndex, RootTargetName, Target, TargetBatch } from './target';
 
 export interface DependencyNode {
   /**
-   * The resolved name of the target.
+   * The display name of the target.
    */
-  name: string;
+  dispName: string;
   /**
    * The target itself.
    */
@@ -76,7 +76,7 @@ export class Runner {
     // current node
     const [target, args] = this.getTask(ns);
     const node: DependencyNode = {
-      name: ns.toString(true),
+      dispName: ns.isRoot ? RootTargetName : ns.toString(true),
       target,
       args,
       leaves: [],
@@ -160,10 +160,10 @@ export class Runner {
    */
   private getTask(name: Namespace): [Target, string[]] {
     if (name.isRoot) {
-      if (!this.tasks['']) {
+      if (!this.tasks[RootTargetIndex]) {
         throw new TakeError(this.env, 'Unable to find default target');
       }
-      return [this.tasks[''], name.args];
+      return [this.tasks[RootTargetIndex], name.args];
     } else {
       let ctask: Target | undefined;
       let tasks = this.tasks;

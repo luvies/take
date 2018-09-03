@@ -3,6 +3,16 @@ import { Namespace } from './namespace';
 import { TakeError } from './take-error';
 
 /**
+ * The index of the root target.
+ */
+export const RootTargetIndex = '';
+
+/**
+ * The display name of the root target.
+ */
+export const RootTargetName = 'root';
+
+/**
  * A batch of task configs.
  */
 export type TargetConfigBatch = Record<string, TargetConfig>;

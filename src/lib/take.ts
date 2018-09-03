@@ -8,7 +8,7 @@ import { Namespace } from './namespace';
 import { DefaultOptions, Options } from './options';
 import { DependencyNode, Runner } from './runner';
 import * as fsp from './shims/fsp';
-import { Target, TargetBatch, TargetConfigBatch } from './target';
+import { RootTargetIndex, RootTargetName, Target, TargetBatch, TargetConfigBatch } from './target';
 import { Utils } from './utils';
 
 export interface CliEnv {
@@ -241,10 +241,10 @@ export class Take {
 
     // build tree
     let tree: TreeNode | TreeNode[] = processTargets(this.targets);
-    if (this.targets['']) {
+    if (this.targets[RootTargetIndex]) {
       tree = {
-        text: getNameFmt('default', this.targets[''].executes),
-        extra: this.targets[''].desc,
+        text: getNameFmt(RootTargetName, this.targets[RootTargetIndex].executes),
+        extra: this.targets[RootTargetIndex].desc,
         children: tree
       };
     }
@@ -266,16 +266,16 @@ export class Take {
       // build tree node
       let depName;
       if (depNode.cyclic) {
-        depName = chalk.red(depNode.name);
+        depName = chalk.red(depNode.dispName);
       } else if (!depNode.execute) {
-        depName = chalk.dim(depNode.name);
+        depName = chalk.dim(depNode.dispName);
       } else {
         if (depNode.target.executes) {
-          depName = chalk.green(depNode.name);
+          depName = chalk.green(depNode.dispName);
         } else if (!depNode.target.deps.length) {
-          depName = chalk.magenta(depNode.name);
+          depName = chalk.magenta(depNode.dispName);
         } else {
-          depName = chalk.cyan(depNode.name);
+          depName = chalk.cyan(depNode.dispName);
         }
       }
 
