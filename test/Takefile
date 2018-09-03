@@ -204,6 +204,12 @@ module.exports = async (take) => {
           ]
         }
       }
+    },
+    long: {
+      desc: 'waits a long time',
+      async execute() {
+        await new Promise(resolve => setTimeout(resolve, 65 * 1000));
+      }
     }
   };
 };

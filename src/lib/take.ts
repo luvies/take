@@ -116,8 +116,12 @@ export class Take {
       const start = process.hrtime();
       await instance.run(names);
       const [diffSecs, diffNanoSecs] = process.hrtime(start);
+      let time: string | number = diffSecs;
+      if (time >= 60) {
+        time = `${Math.round(diffSecs / 60)}m ${diffSecs % 60}`;
+      }
       env.utils.log(chalk.dim(
-        `${env.utils.useEmoji('✨  ')}Done in ${diffSecs}.${diffNanoSecs.toString().slice(0, 2)}s`
+        `${env.utils.useEmoji('✨  ')}Target executed in ${time}.${diffNanoSecs.toString().slice(0, 2)}s`
       ));
     }
   }
