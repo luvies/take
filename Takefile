@@ -5,7 +5,10 @@ module.exports = (take) => {
   take.options.shell.printStderr = true;
 
   return {
-    default: { deps: ['clean', 'build'] },
+    '': {
+      desc: 'Clean & build',
+      deps: ['clean', 'build']
+    },
     build: {
       desc: 'Builds Take',
       async execute() {
@@ -26,6 +29,7 @@ module.exports = (take) => {
       },
       children: {
         'run-local': {
+          desc: 'Runs the local version of take using ts-node and the given arguments',
           async execute(...args) {
             console.log('--- execution output ---');
             await take.shell(
@@ -46,6 +50,7 @@ module.exports = (take) => {
       }
     },
     lint: {
+      desc: 'Lints the src/ folder',
       async execute() {
         await take.exec('tslint', '--project', '.');
       }
@@ -53,7 +58,7 @@ module.exports = (take) => {
     publish: {
       desc: 'Publishes Take to npm',
       deps: [
-        'default', 'test'
+        ':', ':test'
       ],
       async execute() {
         await take.exec('yarn', 'publish');
