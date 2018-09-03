@@ -127,12 +127,27 @@ export class Utils {
     const spawnOpts = copts.spawn || {}; // spawn options
 
     // setup stdio
-    // we override any options given since we need to tap into it
     spawnOpts.stdio = [
       'inherit',
       'pipe',
       'pipe'
     ];
+
+    // enable stdout if we were configured to
+    if (
+      !this.__env.config.suppress.includes(SuppressOptions.CmdStdout) &&
+      copts.printStdout
+    ) {
+      spawnOpts.stdio[1] = 'inherit';
+    }
+
+    // enable stderr if we were configured to
+    if (
+      !this.__env.config.suppress.includes(SuppressOptions.CmdStderr) &&
+      copts.printStderr
+    ) {
+      spawnOpts.stdio[2] = 'inherit';
+    }
 
     // launch and setup process
     if (!this.__env.config.suppress.includes(SuppressOptions.Echo) && copts.echo) {
@@ -142,22 +157,6 @@ export class Utils {
       console.log(`${copts.echoPrefix}${cmd}${fmtargs}${copts.echoSuffix}`);
     }
     const proc = spawn(cmd, args, spawnOpts);
-
-    // set up stdout if we were configured to
-    if (
-      !this.__env.config.suppress.includes(SuppressOptions.CmdStdout) &&
-      copts.printStdout
-    ) {
-      proc.stdout.on('data', (chunk: Buffer) => this.__handlePipeData(process.stdout, chunk));
-    }
-
-    // set up stderr if we were configured to
-    if (
-      !this.__env.config.suppress.includes(SuppressOptions.CmdStderr) &&
-      copts.printStderr
-    ) {
-      proc.stderr.on('data', (chunk: Buffer) => this.__handlePipeData(process.stderr, chunk));
-    }
 
     // set up exit/error events on child process in a containing promise and return it
     return new Promise<number>((resolve, reject) => {
@@ -192,10 +191,5 @@ export class Utils {
       // if nothing was given, act as a noop
       return 0;
     }
-  }
-
-  private __handlePipeData(stream: NodeJS.WriteStream, data: Buffer) {
-    // for now just pass thru the data
-    stream.write(data.toString());
   }
 }
