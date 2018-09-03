@@ -115,8 +115,7 @@ export class Take {
       // run Take with the given arguments while tracking execution time
       const start = process.hrtime();
       await instance.run(names);
-      const end = process.hrtime();
-      const [diffSecs, diffNanoSecs] = [end[0] - start[0], end[1] - start[1]];
+      const [diffSecs, diffNanoSecs] = process.hrtime(start);
       env.utils.log(chalk.dim(
         `${env.utils.useEmoji('✨  ')}Done in ${diffSecs}.${diffNanoSecs.toString().slice(0, 2)}s`
       ));
