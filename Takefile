@@ -25,7 +25,13 @@ module.exports = (take) => {
       desc: 'Tests Take',
       async execute() {
         // use ts-node to allow proper source mapping and not require building
-        await take.exec('./node_modules/mocha/bin/mocha', '-r', 'ts-node/register', 'test/**/*.spec.ts');
+        await take.exec(
+          './node_modules/.bin/nyc',
+          './node_modules/mocha/bin/mocha',
+          '-r', 'ts-node/register',
+          '-r', 'source-map-support/register',
+          'test/**/*.spec.ts'
+        );
       },
       children: {
         'run-local': {
@@ -45,6 +51,11 @@ module.exports = (take) => {
                 }
               }
             );
+          }
+        },
+        coverage: {
+          async execute() {
+            await take.exec('nyc report --reporter=text-lcov | coveralls');
           }
         }
       }
