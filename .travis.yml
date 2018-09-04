@@ -7,4 +7,4 @@ node_js:
 install:
   - yarn
 script:
-  - yarn take test
+  - node_modules/bin/take test
