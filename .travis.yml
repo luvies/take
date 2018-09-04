@@ -8,3 +8,4 @@ install:
   - yarn
 script:
   - take test
+after_success: take test:coverage
