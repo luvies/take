@@ -2,6 +2,16 @@
 # yarn lockfile v1
 
 
+"@luvies/take@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@luvies/take/-/take-0.0.8.tgz#6e001148d71ece12f26e46bdb134bf9fd47473cd"
+  dependencies:
+    argparse "^1.0.10"
+    chalk "^2.4.1"
+    deepmerge "^2.1.1"
+    format-tree "^1.0.2"
+    typescript "^3.0.1"
+
 "@types/argparse@^1.0.34":
   version "1.0.34"
   resolved "https://registry.yarnpkg.com/@types/argparse/-/argparse-1.0.34.tgz#3ee09ced0285c7577d879c51b8cf092125591e68"
