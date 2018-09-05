@@ -1,4 +1,4 @@
-import { SuppressOptions } from './arguments';
+import { SuppressOptions } from './cli';
 import { Namespace } from './namespace';
 import { Options } from './options';
 import { Utils } from './utils';

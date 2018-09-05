@@ -10,7 +10,7 @@ function logError(env?: Environment, ...messages: any[]) {
   }
 }
 
-// run app
+// bootstrap app
 const clienv: CliEnv = {
   trace: false
 };

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { formatTree, TreeNode } from 'format-tree';
 import * as TakeModule from '.';
-import { CliArgs, processArgs } from './arguments';
+import { CliArgs, CliEnv, colors, formatTargetName, printColorInfo, printTargetColorInfo, processArgs } from './cli';
 import { Environment } from './environment';
 import { Loader } from './loader';
 import { Namespace } from './namespace';
@@ -10,11 +10,6 @@ import { DependencyNode, Runner } from './runner';
 import * as fsp from './shims/fsp';
 import { RootTargetIndex, RootTargetName, Target, TargetBatch, TargetConfigBatch } from './target';
 import { Utils } from './utils';
-
-export interface CliEnv {
-  trace: boolean;
-  env?: Environment;
-}
 
 /**
  * The spec for the object that is passed into the Takefile exported function.
@@ -89,17 +84,13 @@ export class Take {
 
     // check meta options before trying to execute tasks
     if (args.listTargets) {
-      env.utils.log(chalk.dim('Targets in green have direct executions, dimmed ones do not'));
+      printTargetColorInfo(env);
       env.utils.log(`${env.utils.useEmoji('🔎  ')}Targets:`);
       env.utils.log(instance.getTargetListString().join('\n'));
     } else if (args.deps) {
       const ns = env.root.resolve(args.deps);
-      env.utils.log(chalk`{green Green} {dim targets would be executed}`);
-      env.utils.log(chalk`{cyan Cyan} {dim targets would be executed, but only have dependencies}`);
-      env.utils.log(chalk`{magenta Magenta} {dim targets would be executed,}`);
-      env.utils.log(chalk`        {dim but don't have an execute function or dependencies}`);
-      env.utils.log(chalk`{dim Dimmed targets would be skipped}`);
-      env.utils.log(chalk`{red Red} {dim targets cause a cyclic dependency}`);
+      printTargetColorInfo(env);
+      printColorInfo(env, colors.skipped, colors.cyclic);
       env.utils.log(`${env.utils.useEmoji('🔧  ')}Dependency tree:`);
       env.utils.log(instance.getTargetDepTreeString(ns).join('\n'));
     } else {
@@ -198,15 +189,6 @@ export class Take {
    * currently loaded.
    */
   public getTargetListString(): string[] {
-    // helpers
-    const getNameFmt = (name: string, executes: boolean): string => {
-      if (executes) {
-        return chalk.green(name);
-      } else {
-        return chalk.dim(name);
-      }
-    };
-
     // build target list
     const processTargets = (targets: TargetBatch): TreeNode[] => {
       const nodes: TreeNode[] = [];
@@ -221,7 +203,7 @@ export class Take {
         // build node
         const target = targets[name];
         const node: TreeNode = {
-          text: getNameFmt(target.name, target.executes),
+          text: formatTargetName(target.name, target),
           extra: target.desc
         };
 
@@ -243,7 +225,7 @@ export class Take {
     let tree: TreeNode | TreeNode[] = processTargets(this.targets);
     if (this.targets[RootTargetIndex]) {
       tree = {
-        text: getNameFmt(RootTargetName, this.targets[RootTargetIndex].executes),
+        text: formatTargetName(RootTargetName, this.targets[RootTargetIndex]),
         extra: this.targets[RootTargetIndex].desc,
         children: tree
       };
@@ -266,17 +248,11 @@ export class Take {
       // build tree node
       let depName;
       if (depNode.cyclic) {
-        depName = chalk.red(depNode.dispName);
+        depName = colors.cyclic.color(depNode.dispName);
       } else if (!depNode.execute) {
-        depName = chalk.dim(depNode.dispName);
+        depName = colors.skipped.color(depNode.dispName);
       } else {
-        if (depNode.target.executes) {
-          depName = chalk.green(depNode.dispName);
-        } else if (!depNode.target.deps.length) {
-          depName = chalk.magenta(depNode.dispName);
-        } else {
-          depName = chalk.cyan(depNode.dispName);
-        }
+        depName = formatTargetName(depNode.dispName, depNode.target);
       }
 
       const treeNode: TreeNode = {
