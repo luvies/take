@@ -4,26 +4,26 @@ import { Environment } from '../src/lib/environment';
 import { DefaultOptions } from '../src/lib/options';
 import { Target } from '../src/lib/target';
 
-describe('Task', function(this) {
+describe('Task', function() {
   let env: Environment;
 
   function initEach() {
     env = new Environment(DefaultOptions());
   }
 
-  describe('#constructor', function(this) {
+  describe('#constructor', function() {
     beforeEach(initEach);
 
-    it('should work', function(this) {
+    it('should work', function() {
       const task = new Target('test', {}, env);
       expect(task).to.be.instanceOf(Target);
     });
   });
 
-  describe('#processTaskConfig', function(this) {
+  describe('#processTaskConfig', function() {
     beforeEach(initEach);
 
-    it('should process a single empty top-level task', function(this) {
+    it('should process a single empty top-level task', function() {
       const tasks = Target.processTaskConfig({
         'target1': {}
       }, env);

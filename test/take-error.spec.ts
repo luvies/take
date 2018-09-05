@@ -4,19 +4,19 @@ import { Environment } from '../src/lib/environment';
 import { DefaultOptions } from '../src/lib/options';
 import { TakeError } from '../src/lib/take-error';
 
-describe('TakeError', function(this) {
-  describe('#isTakeError', function(this) {
-    it('should correctly identify an instance as one of TakeError', function(this) {
+describe('TakeError', function() {
+  describe('#isTakeError', function() {
+    it('should correctly identify an instance as one of TakeError', function() {
       const err = new TakeError(new Environment(DefaultOptions()));
       expect(TakeError.isTakeError(err)).to.be.true;
     })
 
-    it('should correctly identify an Error instance as not one of TakeError', function(this) {
+    it('should correctly identify an Error instance as not one of TakeError', function() {
       const err = new Error();
       expect(TakeError.isTakeError(err)).to.be.false;
     })
 
-    it('should correctly identify non-error variables as not TakeError', function(this) {
+    it('should correctly identify non-error variables as not TakeError', function() {
       expect(TakeError.isTakeError(undefined)).to.be.false;
       expect(TakeError.isTakeError('test string')).to.be.false;
       expect(TakeError.isTakeError(10)).to.be.false;
@@ -25,8 +25,8 @@ describe('TakeError', function(this) {
     })
   });
 
-  describe('#name', function(this) {
-    it('should equal the class name', function(this) {
+  describe('#name', function() {
+    it('should equal the class name', function() {
       const err = new TakeError(new Environment(DefaultOptions()));
       expect(err.name).to.equal(TakeError.name);
     });

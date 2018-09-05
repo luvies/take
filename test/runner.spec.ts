@@ -5,7 +5,7 @@ import { DefaultOptions } from '../src/lib/options';
 import { Runner } from '../src/lib/runner';
 import { Target, TargetConfigBatch } from '../src/lib/target';
 
-describe('Runner', function(this) {
+describe('Runner', function() {
   // instance variables
   let env: Environment;
   let conf: TargetConfigBatch;
@@ -80,30 +80,30 @@ describe('Runner', function(this) {
     runner.execute(env.root.resolve(ns + argString));
   }
 
-  describe('#construct', function(this) {
+  describe('#construct', function() {
     beforeEach(initEach);
 
-    it('should construct', function(this) {
+    it('should construct', function() {
       expect(runner).to.be.an.instanceOf(Runner);
     });
   })
 
-  describe('#execute', function(this) {
+  describe('#execute', function() {
     beforeEach(initEach);
 
-    it('should execute root as empty name target', function(this) {
+    it('should execute root as empty name target', function() {
       exec()
 
       expect(executions).to.be.equal(1);
     })
 
-    it('should execute top-level complex target', function(this) {
+    it('should execute top-level complex target', function() {
       exec('1');
 
       expect(executions).to.be.equal(1);
     })
 
-    it('should execute second-level complex target', function(this) {
+    it('should execute second-level complex target', function() {
       exec(':1:2');
 
       expect(executions).to.be.equal(1);
