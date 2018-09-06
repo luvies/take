@@ -1,2 +1,5 @@
 # force Takefile language
 Takefile linguist-language=typescript
+
+# force cli.ts language cause github refuses to acknowledge it
+src/bin/cli.ts linguist-language=typescript
