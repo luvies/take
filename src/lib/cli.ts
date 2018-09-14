@@ -92,6 +92,7 @@ export interface CliEnv {
  */
 export enum SuppressOptions {
   Echo = 'echo',
+  ExecTime = 'exec-time',
   TakeStdout = 't-stdout',
   TakeStderr = 't-stderr',
   CmdStdout = 'c-stdout',
@@ -218,6 +219,7 @@ export async function processArgs(): Promise<CliArgs> {
     {
       help: 'The output types to suppress (can be multiple --suppress or comma separated). ' +
         'echo: supresses the printing of the commands back to the console just before execution. ' +
+        'exec-time: supresses the output of execution time of a target. ' +
         't-stdout: supresses the stdout of Take. ' +
         't-stderr: supresses the stderr of Take. ' +
         'c-stdout: supresses the stdout of the commands. ' +

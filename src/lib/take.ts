@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { formatTree, TreeNode } from 'format-tree';
 import * as TakeModule from '.';
-import { CliArgs, CliEnv, colors, formatTargetName, printColorInfo, printTargetColorInfo, processArgs } from './cli';
+import { CliArgs, CliEnv, colors, formatTargetName, printColorInfo, printTargetColorInfo, processArgs, SuppressOptions } from './cli';
 import { Environment } from './environment';
 import { Loader } from './loader';
 import { Namespace } from './namespace';
@@ -107,13 +107,17 @@ export class Take {
       const start = process.hrtime();
       await instance.run(names);
       const [diffSecs, diffNanoSecs] = process.hrtime(start);
-      let time: string | number = diffSecs;
-      if (time >= 60) {
-        time = `${Math.round(diffSecs / 60)}m ${diffSecs % 60}`;
+
+      // if not suppressed, output the execution time
+      if (!args.suppress.includes(SuppressOptions.ExecTime)) {
+        let time: string | number = diffSecs;
+        if (time >= 60) {
+          time = `${Math.round(diffSecs / 60)}m ${diffSecs % 60}`;
+        }
+        env.utils.log(chalk.dim(
+          `${env.utils.useEmoji('✨  ')}Target executed in ${time}.${diffNanoSecs.toString().slice(0, 2)}s`
+        ));
       }
-      env.utils.log(chalk.dim(
-        `${env.utils.useEmoji('✨  ')}Target executed in ${time}.${diffNanoSecs.toString().slice(0, 2)}s`
-      ));
     }
   }
 
