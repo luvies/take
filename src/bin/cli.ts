@@ -6,7 +6,7 @@ function logError(env?: Environment, ...messages: any[]) {
     env.utils.logError(...messages);
   } else {
     // tslint:disable-next-line:no-console
-    console.log(...messages);
+    console.error(...messages);
   }
 }
 
