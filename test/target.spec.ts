@@ -20,11 +20,11 @@ describe('Task', function() {
     });
   });
 
-  describe('#processTaskConfig', function() {
+  describe('#processTargetConfig', function() {
     beforeEach(initEach);
 
     it('should process a single empty top-level task', function() {
-      const tasks = Target.processTaskConfig({
+      const tasks = Target.processTargetConfig({
         'target1': {}
       }, env);
       expect(tasks).have.key('target1');

@@ -106,7 +106,7 @@ describe('Runner', function() {
         execute: execute(21)
       },
     };
-    runner = new Runner(env, Target.processTaskConfig(conf, env));
+    runner = new Runner(env, Target.processTargetConfig(conf, env));
   }
 
   async function exec(ns: string = '', args?: string[]) {
