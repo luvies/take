@@ -13,21 +13,21 @@ export const RootTargetIndex = '';
 export const RootTargetName = 'root';
 
 /**
- * A batch of task configs.
+ * A batch of target configs.
  */
 export type TargetConfigBatch = Record<string, TargetConfig>;
 
 /**
- * The spec for the task config object.
+ * The spec for the target config object.
  */
 export interface TargetConfig {
   /**
-   * The task description.
+   * The target description.
    */
   desc?: string;
   /**
    * The dependency or list of dependencies that need to be ran before
-   * this task.
+   * this target.
    */
   deps?: string | string[];
   /**
@@ -35,12 +35,12 @@ export interface TargetConfig {
    */
   parallelDeps?: boolean;
   /**
-   * The children tasks of this task. Allows for namespacing.
+   * The children targets of this target. Allows for namespacing.
    */
   children?: TargetConfigBatch;
   /**
-   * Whether this task depends on the parent task before it can be run.
-   * If the dependencies are run synchronously, then the parent task
+   * Whether this target depends on the parent target before it can be run.
+   * If the dependencies are run synchronously, then the parent target
    * is ran first.
    */
   depParent?: boolean;
@@ -50,27 +50,27 @@ export interface TargetConfig {
    */
   ns?: Namespace;
   /**
-   * The function used to perform the task.
+   * The function used to perform the target.
    */
   execute?(...args: string[]): void | Promise<void>;
 }
 
 /**
- * A batch of tasks.
+ * A batch of targets.
  */
 export type TargetBatch = Record<string, Target>;
 
 /**
- * Contains information about a task and its children, as well and being able to
+ * Contains information about a target and its children, as well and being able to
  * execute it.
  */
 export class Target {
   /**
-   * Converts the task config into an object that contains all the tasks it declares.
+   * Converts the target config into an object that contains all the targets it declares.
    *
-   * @returns The base task set object.
+   * @returns The base target set object.
    */
-  public static processTaskConfig(config: TargetConfigBatch, env: Environment): TargetBatch {
+  public static processTargetConfig(config: TargetConfigBatch, env: Environment): TargetBatch {
     const targets: TargetBatch = {};
     for (const name of Object.keys(config)) {
       targets[name] = new Target(name, config[name], env);
@@ -79,11 +79,11 @@ export class Target {
   }
 
   /**
-   * The tasks target dependencies.
+   * The targets target dependencies.
    */
   public deps: Namespace[] = [];
   /**
-   * The child tasks.
+   * The child targets.
    */
   public children: TargetBatch;
 
@@ -110,7 +110,7 @@ export class Target {
     // get the base namespace to work dependencies off
     const baseNs = env.options.allDepsAbsolute ? env.root : path.resolve(name);
 
-    // if this task depends on its parent, add it
+    // if this target depends on its parent, add it
     // ignore if this is in the root namespace
     if (!path.isRoot && config.depParent) {
       this.deps.push(baseNs.resolve(env.options.namespaceParent));
@@ -137,7 +137,7 @@ export class Target {
     // access it via this.ns
     config.ns = path;
 
-    // build the children tasks
+    // build the children targets
     this.children = {};
     if (config.children) {
       for (const child of Object.keys(config.children)) {
@@ -147,7 +147,7 @@ export class Target {
   }
 
   /**
-   * The task's description if it was given.
+   * The target's description if it was given.
    */
   public get desc(): string | undefined {
     return this.config.desc;
@@ -165,7 +165,7 @@ export class Target {
   }
 
   /**
-   * Executes the task's suppied execute function if it was given.
+   * Executes the target's suppied execute function if it was given.
    * If the function returns an awaitable object, it is awaited before returning.
    */
   public async execute(args: string[] = []): Promise<void> {
