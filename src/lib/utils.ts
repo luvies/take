@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import merge from 'deepmerge';
 import { SuppressOptions } from './cli';
 import { Environment } from './environment';
-import { IShellOptions } from './options';
+import { ShellOptions } from './options';
 import { TakeError } from './take-error';
 
 // since this class is purely for mixing into the TakefileEnv object,
@@ -115,7 +115,7 @@ export class Utils {
    * @param opts The options to pass to spawn and to use to override `shellOptions`. Ignored if
    * `args` is not an array.
    */
-  public shell(cmd: string, args?: string[] | Partial<IShellOptions>, opts?: Partial<IShellOptions>): Promise<number> {
+  public shell(cmd: string, args?: string[] | Partial<ShellOptions>, opts?: Partial<ShellOptions>): Promise<number> {
     // if the opts argument was passed in second, reorganise parameters
     if (!Array.isArray(args)) {
       opts = args;

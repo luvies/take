@@ -46,7 +46,7 @@ const DefaultShellOptions = {
   } as SpawnOptions
 };
 
-export type IShellOptions = typeof DefaultShellOptions;
+export type ShellOptions = typeof DefaultShellOptions;
 
 /**
  * The spec for the options object.
@@ -82,7 +82,7 @@ export interface Options {
    * The default options used for executing commands using the shell utility function.
    * These also apply to exec and its variations unless otherwise stated.
    */
-  shell: IShellOptions;
+  shell: ShellOptions;
   /**
    * Whether to use ✨ emojis ✨ in terminal output.
    * The default is environment dependant, since not everything supports emojis.
