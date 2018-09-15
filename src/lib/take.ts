@@ -1,14 +1,23 @@
 import chalk from 'chalk';
 import { formatTree, TreeNode } from 'format-tree';
 import * as TakeModule from '.';
-import { CliArgs, CliEnv, colors, formatTargetName, printColorInfo, printTargetColorInfo, processArgs, SuppressOptions } from './cli';
+import {
+  CliArgs, CliEnv, colors,
+  formatTargetName, printColorInfo,
+  printTargetColorInfo, processArgs,
+  SuppressOptions
+} from './cli';
 import { Environment } from './environment';
 import { Loader } from './loader';
 import { Namespace } from './namespace';
 import { DefaultOptions, Options } from './options';
 import { DependencyNode, Runner } from './runner';
 import * as fsp from './shims/fsp';
-import { RootTargetIndex, RootTargetName, Target, TargetBatch, TargetConfigBatch } from './target';
+import {
+  RootTargetIndex, RootTargetName,
+  Target, TargetBatch,
+  TargetConfigBatch
+} from './target';
 import { Utils } from './utils';
 
 /**
