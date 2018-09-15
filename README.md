@@ -1,5 +1,5 @@
 # Take - A Promise & TypeScript-based build tool & task runner
-![build status](https://travis-ci.com/luvies/take.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/luvies/take/badge.svg?branch=master)](https://coveralls.io/github/luvies/take?branch=master)
+![build status](https://travis-ci.com/luvies/take.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/luvies/take/badge.svg?branch=master)](https://coveralls.io/github/luvies/take?branch=master) [![npm version](https://badge.fury.io/js/%40luvies%2Ftake.svg)](https://badge.fury.io/js/%40luvies%2Ftake)
 
 Take is a TypeScript-based task runner aimed at providing a solution to create Makefiles that are powerful yet need little extra config. Take is based on the following principles:
 
