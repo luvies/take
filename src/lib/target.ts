@@ -13,14 +13,50 @@ export const RootTargetIndex = '';
 export const RootTargetName = 'root';
 
 /**
+ * The kind of matching to apply to the target name.
+ */
+export enum TargetMatch {
+  Regex = 'regex',
+  Glob = 'glob'
+}
+
+/**
  * A batch of target configs.
  */
 export type TargetConfigBatch = Record<string, TargetConfig>;
 
 /**
+ * The spec for the target match data.
+ */
+export interface TargetMatchData {
+  /**
+   * The full match.
+   */
+  full: string;
+  /**
+   * The groups that were matched by the regex matcher. If not using regex, then this
+   * will just be an empty list.
+   */
+  groups: string[];
+}
+
+/**
  * The spec for the target config object.
  */
 export interface TargetConfig {
+  /**
+   * How to match the target name. If not given, then the name is matched exactly.
+   *
+   * Match search order:
+   * - exact
+   * - regex
+   * - glob
+   *
+   * Valid options:
+   * - `regex`
+   * - `glob`
+   */
+  match?: TargetMatch;
   /**
    * The target description.
    */
@@ -45,10 +81,22 @@ export interface TargetConfig {
    */
   depParent?: boolean;
   /**
-   * This is set by Take when building the targets, so execute() can dynamically
-   * call targets using the current namespace.
+   * This is set by Take when building the targets. It contains various properties that
+   * describe the current run, like the executing namespace and the matched name
+   * (useful for non-exact name matches).
    */
-  ns?: Namespace;
+  run?: {
+    /**
+     * The current namespace that the target is executing in.
+     */
+    ns: Namespace;
+    /**
+     * The matched target name. For exact matched targets, this is the same as the target name
+     * in the config object, but for dynamically matched targets, it will be the user-provided target
+     * name.
+     */
+    match: TargetMatchData;
+  };
   /**
    * The function used to perform the target.
    */
@@ -56,13 +104,37 @@ export interface TargetConfig {
 }
 
 /**
- * A batch of targets.
+ * A batch of targets that are using exact names.
  */
-export type TargetBatch = Record<string, Target>;
+export type ExactTargetBatch = Record<string, Target>;
 
 /**
- * Contains information about a target and its children, as well and being able to
- * execute it.
+ * A regex rule target.
+ */
+export type RegexTargetBatch = Array<{
+  rule: RegExp;
+  target: Target;
+}>;
+
+/**
+ * A glob rule target.
+ */
+export type GlobTargetBatch = Array<{
+  rule: string;
+  target: Target;
+}>;
+
+/**
+ * A tree of target batches.
+ */
+export interface TargetBatchTree {
+  exact: ExactTargetBatch;
+  regex: RegexTargetBatch;
+  glob: GlobTargetBatch;
+}
+
+/**
+ * Contains information about a target and its children, and can perform the execution.
  */
 export class Target {
   /**
@@ -70,12 +142,51 @@ export class Target {
    *
    * @returns The base target set object.
    */
-  public static processTargetConfig(config: TargetConfigBatch, env: Environment): TargetBatch {
-    const targets: TargetBatch = {};
+  public static processTargetConfig(config: TargetConfigBatch, env: Environment, path?: Namespace): TargetBatchTree {
+    // init batches
+    const exact: ExactTargetBatch = {};
+    const regex: RegexTargetBatch = [];
+    const glob: GlobTargetBatch = [];
+
+    // extract targets
     for (const name of Object.keys(config)) {
-      targets[name] = new Target(name, config[name], env);
+      const targetConf = config[name];
+
+      // helper fn
+      const getTarget = (tname: string) => new Target(tname, targetConf, env, path);
+
+      switch (targetConf.match) {
+        case TargetMatch.Regex:
+          // convert string key into regex object
+          const match = /^\/(.*)\/(.*)$/.exec(name);
+          if (!match) {
+            throw new TakeError(env, `'${name}' is not a valid RegExp literal`);
+          }
+          const re = new RegExp(match[1], match[2]);
+
+          regex.push({
+            rule: re,
+            target: getTarget(name)
+          });
+          break;
+        case TargetMatch.Glob:
+          glob.push({
+            rule: name,
+            target: getTarget(name)
+          });
+          break;
+        default:
+          exact[name] = getTarget(name);
+          break;
+      }
     }
-    return targets;
+
+    // create tree batch
+    return {
+      exact,
+      regex,
+      glob
+    };
   }
 
   /**
@@ -85,16 +196,24 @@ export class Target {
   /**
    * The child targets.
    */
-  public children: TargetBatch;
+  public children: TargetBatchTree;
+
+  /**
+   * The path to get to this target.
+   */
+  private path: Namespace;
 
   public constructor(
+    /**
+     * The name of the target. This is the last item in the namespace path.
+     */
     public name: string,
     private config: TargetConfig,
     env: Environment,
     path?: Namespace
   ) {
     // make sure we have a path
-    path = path || env.root;
+    this.path = path = path || env.root;
 
     // validate target name
     if (!path.isRoot && !name) {
@@ -133,17 +252,8 @@ export class Target {
       this.deps.push(baseNs.resolve(dep));
     }
 
-    // store the current namespace in the config object, so that the executor can
-    // access it via this.ns
-    config.ns = path;
-
     // build the children targets
-    this.children = {};
-    if (config.children) {
-      for (const child of Object.keys(config.children)) {
-        this.children[child] = new Target(child, config.children[child], env, path.resolve(name));
-      }
-    }
+    this.children = Target.processTargetConfig(config.children || {}, env, path.resolve(name));
   }
 
   /**
@@ -160,6 +270,9 @@ export class Target {
     return this.config.parallelDeps as boolean;
   }
 
+  /**
+   * Returns whether this target has an execute function or not.
+   */
   public get executes(): boolean {
     return !!this.config.execute;
   }
@@ -168,8 +281,14 @@ export class Target {
    * Executes the target's suppied execute function if it was given.
    * If the function returns an awaitable object, it is awaited before returning.
    */
-  public async execute(args: string[] = []): Promise<void> {
+  public async execute(match: TargetMatchData, args: string[] = []): Promise<void> {
     if (this.config.execute) {
+      // create the run data
+      this.config.run = {
+        ns: this.path,
+        match
+      };
+
       // await regardless, since void results can be awaited
       // (they just return immediately)
       await this.config.execute(...args);

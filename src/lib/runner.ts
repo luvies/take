@@ -1,13 +1,10 @@
+import minimatch from 'minimatch';
 import { Environment } from './environment';
 import { Namespace } from './namespace';
 import { TakeError } from './take-error';
-import { RootTargetIndex, RootTargetName, Target, TargetBatch } from './target';
+import { RootTargetIndex, RootTargetName, Target, TargetBatchTree, TargetMatchData } from './target';
 
-export interface DependencyNode {
-  /**
-   * The display name of the target.
-   */
-  dispName: string;
+export interface NodeExecData {
   /**
    * The target itself.
    */
@@ -16,6 +13,21 @@ export interface DependencyNode {
    * The arguments to execute the target with.
    */
   args: string[];
+  /**
+   * The matched name of the target.
+   */
+  match: TargetMatchData;
+}
+
+export interface DependencyNode {
+  /**
+   * The display name of the target.
+   */
+  dispName: string;
+  /**
+   * The execute data for this node.
+   */
+  execData: NodeExecData;
   /**
    * The dependencies to execute first.
    */
@@ -33,7 +45,7 @@ export interface DependencyNode {
 export class Runner {
   public constructor(
     private env: Environment,
-    private tasks: TargetBatch
+    private targets: TargetBatchTree
   ) { }
 
   /**
@@ -74,11 +86,9 @@ export class Runner {
     }
 
     // current node
-    const [target, args] = this.getTask(ns);
     const node: DependencyNode = {
       dispName: ns.isRoot ? RootTargetName : ns.toString(true),
-      target,
-      args,
+      execData: this.getTask(ns),
       leaves: [],
       execute: false,
       cyclic: false
@@ -100,8 +110,8 @@ export class Runner {
     }
 
     // build leaves
-    if (node.target.deps) {
-      for (const dep of node.target.deps) {
+    if (node.execData.target.deps) {
+      for (const dep of node.execData.target.deps) {
         // if we should, build the dependencies
         if (node.execute && !node.cyclic) {
           const [depNode, depSafe] = this.buildDependencyTree(dep, ns, path, foundTargets);
@@ -131,7 +141,7 @@ export class Runner {
 
     // if we have any leaves, execute them according to the task config
     if (node.leaves) {
-      if (node.target.parallelDeps) {
+      if (node.execData.target.parallelDeps) {
         // execute the leaves in parallel
         const deps: Array<Promise<void>> = [];
         for (const leaf of node.leaves) {
@@ -149,37 +159,77 @@ export class Runner {
     }
 
     // now the dependencies are done, execute the node itself
-    await node.target.execute(node.args);
+    await node.execData.target.execute(node.execData.match, node.execData.args);
   }
 
   /**
    * Converts the target string into the resolved task.
    *
    * @param name The target to search for.
-   * @returns The resolved task and its arguments.
+   * @returns The resolved task, its arguments, and the matched name.
    */
-  private getTask(name: Namespace): [Target, string[]] {
+  private getTask(name: Namespace): NodeExecData {
     if (name.isRoot) {
-      if (!this.tasks[RootTargetIndex]) {
+      if (!this.targets.exact[RootTargetIndex]) {
         throw new TakeError(this.env, 'Unable to find default target');
       }
-      return [this.tasks[RootTargetIndex], name.args];
-    } else {
-      let ctask: Target | undefined;
-      let tasks = this.tasks;
-      for (const cns of name.names) {
-        if (tasks[cns]) {
-          ctask = tasks[cns];
-          tasks = ctask.children;
-        } else {
-          ctask = undefined;
-          break;
+      return {
+        target: this.targets.exact[RootTargetIndex],
+        args: name.args,
+        match: {
+          full: '',
+          groups: []
         }
+      };
+    } else {
+      // set up current state
+      let ctarget: Target;
+      let cmatch: TargetMatchData;
+      let targets: TargetBatchTree = this.targets;
+
+      // search for target in each part of the namespace
+      for (const cns of name.names) {
+        // perform search
+        [ctarget, cmatch, targets] = this.searchForTarget(cns, targets, name);
       }
-      if (!ctask) {
-        throw new TakeError(this.env, `Unable to find target ${name}`);
-      }
-      return [ctask, name.args];
+
+      return {
+        target: ctarget!,
+        args: name.args,
+        match: cmatch!
+      };
     }
+  }
+
+  private searchForTarget(
+    cns: string, targets: TargetBatchTree, name: Namespace
+  ): [Target, TargetMatchData, TargetBatchTree] {
+    const match: TargetMatchData = {
+      full: cns,
+      groups: []
+    };
+
+    if (targets.exact[cns]) {
+      return [targets.exact[cns], match, targets.exact[cns].children];
+    }
+
+    // search in regex matches
+    for (const re of targets.regex) {
+      const rmatch = cns.match(re.rule);
+      if (rmatch) {
+        match.groups = rmatch.slice(1);
+        return [re.target, match, re.target.children];
+      }
+    }
+
+    // search in glob matches
+    for (const glob of targets.glob) {
+      if (minimatch(cns, glob.rule)) {
+        return [glob.target, match, glob.target.children];
+      }
+    }
+
+    // if we couldn't find the target, then throw an error
+    throw new TakeError(this.env, `Unable to find target ${name}`);
   }
 }

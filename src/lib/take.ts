@@ -15,7 +15,7 @@ import { DependencyNode, Runner } from './runner';
 import * as fsp from './shims/fsp';
 import {
   RootTargetIndex, RootTargetName,
-  Target, TargetBatch,
+  Target, TargetBatchTree,
   TargetConfigBatch
 } from './target';
 import { Utils } from './utils';
@@ -148,7 +148,7 @@ export class Take {
     const loader: Loader = await (fromDir ? Loader.fromDir(path, env) : Loader.fromFile(path, env));
     const tfEnv = Take.createTakefileEnv(env);
     const taskConf: TargetConfigBatch = await loader.loadConfig(tfEnv);
-    const targets: TargetBatch = Target.processTargetConfig(taskConf, env);
+    const targets: TargetBatchTree = Target.processTargetConfig(taskConf, env);
     const runner = new Runner(env, targets);
 
     // return new instance
@@ -178,7 +178,7 @@ export class Take {
     /**
      * The tasks that have been loaded from the Takefile.
      */
-    public targets: TargetBatch,
+    public targets: TargetBatchTree,
     /**
      * The runner that can execute the targets.
      */
@@ -203,29 +203,29 @@ export class Take {
    */
   public getTargetListString(): string[] {
     // build target list
-    const processTargets = (targets: TargetBatch): TreeNode[] => {
+    const processTargets = (targets: TargetBatchTree): TreeNode[] => {
       const nodes: TreeNode[] = [];
 
-      const keys = Object.keys(targets);
-      for (const name of keys) {
+      for (const target of [
+        // extract each list of targets out in turn
+        // they are extracted in priority order
+        ...Object.keys(targets.exact).map(key => targets.exact[key]),
+        ...targets.regex.map(re => re.target),
+        ...targets.glob.map(gb => gb.target)
+      ]) {
         // exclude root node
-        if (!name) {
+        if (!target.name) {
           continue;
         }
 
         // build node
-        const target = targets[name];
         const node: TreeNode = {
           text: formatTargetName(target.name, target),
           extra: target.desc
         };
 
         // build children
-        if (Object.keys(target.children).length) {
-          node.children = processTargets(
-            target.children
-          );
-        }
+        node.children = processTargets(target.children);
 
         // add node
         nodes.push(node);
@@ -236,10 +236,10 @@ export class Take {
 
     // build tree
     let tree: TreeNode | TreeNode[] = processTargets(this.targets);
-    if (this.targets[RootTargetIndex]) {
+    if (this.targets.exact[RootTargetIndex]) {
       tree = {
-        text: formatTargetName(RootTargetName, this.targets[RootTargetIndex]),
-        extra: this.targets[RootTargetIndex].desc,
+        text: formatTargetName(RootTargetName, this.targets.exact[RootTargetIndex]),
+        extra: this.targets.exact[RootTargetIndex].desc,
         children: tree
       };
     }
@@ -265,12 +265,12 @@ export class Take {
       } else if (!depNode.execute) {
         depName = colors.skipped.color(depNode.dispName);
       } else {
-        depName = formatTargetName(depNode.dispName, depNode.target);
+        depName = formatTargetName(depNode.dispName, depNode.execData.target);
       }
 
       const treeNode: TreeNode = {
         text: depName,
-        extra: depNode.target.desc,
+        extra: depNode.execData.target.desc,
         children: []
       };
 

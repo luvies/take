@@ -147,7 +147,11 @@ module.exports = async (take) => {
       async execute(...args) {
         await take.shell('echo test 1');
         await take.execo('echo test 2');
-        await take.shell('echo test', ['3'], { spawn: { shell: true } });
+        await take.shell('echo test', ['3'], {
+          spawn: {
+            shell: true
+          }
+        });
         console.log(args);
       },
       children: {
@@ -209,6 +213,19 @@ module.exports = async (take) => {
       desc: 'waits a long time',
       async execute() {
         await new Promise(resolve => setTimeout(resolve, 65 * 1000));
+      }
+    },
+    // @ts-ignore
+    [/(.*)\.re$/i]: {
+      match: 'regex',
+      async execute() {
+        take.log('regex:', this.run.match);
+      }
+    },
+    '*.test': {
+      match: 'glob',
+      async execute() {
+        take.log('glob:', this.run.match);
       }
     }
   };

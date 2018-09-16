@@ -24,13 +24,13 @@ describe('Task', function() {
     beforeEach(initEach);
 
     it('should process a single empty top-level task', function() {
-      const tasks = Target.processTargetConfig({
+      const { exact: tasks } = Target.processTargetConfig({
         'target1': {}
       }, env);
       expect(tasks).have.key('target1');
       const task = tasks['target1'];
       expect(task).to.be.instanceOf(Target);
-      expect(task.children).to.be.empty;
+      expect(task.children.exact).to.be.empty;
       expect(task.deps).to.be.empty;
       expect(task.desc).to.be.undefined;
       expect(task.parallelDeps).to.be.not.ok;

@@ -22,7 +22,6 @@ describe('Runner', function() {
 
     // build sample config
     const execute = (target: any) => (...args: string[]) => {
-      console.log(target, 'fired');
       executions.push({ target: target.toString(), args })
     };
     conf = {
@@ -155,7 +154,6 @@ describe('Runner', function() {
     it('should execute a top-level target with a single string dependent', async function() {
       await exec(':10');
 
-      console.log(executions);
       expect(executions).to.be.eql([
         { target: '1', args: [] },
         { target: '10', args: [] }
