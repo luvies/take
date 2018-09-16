@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { Environment } from '../src/lib/environment';
 import { DefaultOptions } from '../src/lib/options';
-import { Target } from '../src/lib/target';
+import { Target } from '../src/lib/tgt/target';
 
 describe('Task', function() {
   let env: Environment;

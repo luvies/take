@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import merge from 'deepmerge';
-import { SuppressOptions } from './cli';
+import { SuppressOptions } from './cli/args';
 import { Environment } from './environment';
 import { ShellOptions } from './options';
 import { TakeError } from './take-error';

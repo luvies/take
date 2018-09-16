@@ -3,7 +3,7 @@ import { Environment } from './environment';
 import * as fsp from './shims/fsp';
 import { TakefileEnv } from './take';
 import { TakeError } from './take-error';
-import { TargetConfigBatch } from './target';
+import { TargetConfigBatch } from './tgt/config';
 
 /**
  * Provides logic to load the Takefile config from the file itself.

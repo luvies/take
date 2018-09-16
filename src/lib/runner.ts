@@ -2,7 +2,10 @@ import minimatch from 'minimatch';
 import { Environment } from './environment';
 import { Namespace } from './namespace';
 import { TakeError } from './take-error';
-import { RootTargetIndex, RootTargetName, Target, TargetBatchTree, TargetMatchData } from './target';
+import { TargetBatchTree } from './tgt/batch';
+import { TargetMatchData } from './tgt/config';
+import { RootTargetIndex, RootTargetName } from './tgt/const';
+import { Target } from './tgt/target';
 
 /**
  * Contains data that is needed to execute a target.
