@@ -5,7 +5,13 @@ import { TakefileEnv } from './take';
 import { TakeError } from './take-error';
 import { TargetConfigBatch } from './target';
 
+/**
+ * Provides logic to load the Takefile config from the file itself.
+ */
 export class Loader {
+  /**
+   * Creates a loader instance from a directory.
+   */
   public static async fromDir(dir: string, env: Environment): Promise<Loader> {
     // search for Takefile
     let fpath;
@@ -22,9 +28,12 @@ export class Loader {
     }
 
     // create the loader and return it
-    return new Loader(join(dir, fpath), env);
+    return new Loader(join(dir, fpath));
   }
 
+  /**
+   * Creates a loader instance from a file.
+   */
   public static async fromFile(file: string, env: Environment): Promise<Loader> {
     // make sure file exists
     try {
@@ -34,14 +43,16 @@ export class Loader {
     }
 
     // create new loader and return it
-    return new Loader(file, env);
+    return new Loader(file);
   }
 
   private constructor(
-    private path: string,
-    private env: Environment
+    private path: string
   ) { }
 
+  /**
+   * Loads the config from the Takefile, passing in the TakefileEnv object to the module function.
+   */
   public async loadConfig(tfEnv: TakefileEnv): Promise<TargetConfigBatch> {
     // since we're not doing anything fancy yet, just require it normally
     const takefile = require(resolve(this.path));

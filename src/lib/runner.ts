@@ -4,6 +4,9 @@ import { Namespace } from './namespace';
 import { TakeError } from './take-error';
 import { RootTargetIndex, RootTargetName, Target, TargetBatchTree, TargetMatchData } from './target';
 
+/**
+ * Contains data that is needed to execute a target.
+ */
 export interface NodeExecData {
   /**
    * The target itself.
@@ -19,6 +22,10 @@ export interface NodeExecData {
   match: TargetMatchData;
 }
 
+/**
+ * A node in the dependency tree that is built when attempting to execute a target and
+ * its dependencies.
+ */
 export interface DependencyNode {
   /**
    * The display name of the target.
@@ -42,6 +49,9 @@ export interface DependencyNode {
   cyclic: boolean;
 }
 
+/**
+ * Provides methods for executing a target and its dependencies.
+ */
 export class Runner {
   public constructor(
     private env: Environment,
@@ -201,6 +211,15 @@ export class Runner {
     }
   }
 
+  /**
+   * Searches each batch in the current batch tree object for the given target name.
+   * Batches are searched in priority order.
+   *
+   * @param cns The current namespace path part.
+   * @param targets The current target batch tree object.
+   * @param name The complete namespace that is being searched for (used for error messages).
+   * @returns A tuple with the found Target, TargetMatchData and next TargetBatchTree object.
+   */
   private searchForTarget(
     cns: string, targets: TargetBatchTree, name: Namespace
   ): [Target, TargetMatchData, TargetBatchTree] {

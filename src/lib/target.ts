@@ -158,7 +158,7 @@ export class Target {
       switch (targetConf.match) {
         case TargetMatch.Regex:
           // convert string key into regex object
-          const match = /^\/(.*)\/(.*)$/.exec(name);
+          const match = name.match(/^\/(.*)\/(.*)$/);
           if (!match) {
             throw new TakeError(env, `'${name}' is not a valid RegExp literal`);
           }

@@ -2,9 +2,12 @@ import { Environment } from './environment';
 import { TakeError } from './take-error';
 
 /**
- * Provides helpers methods for dealing with namespaces.
+ * Provides methods for dealing with namespaces.
  */
 export class Namespace {
+  /**
+   * Gets the root namespace that can be used to resolve other namespaces from.
+   */
   public static getRoot(env: Environment): Namespace {
     return new Namespace(env, []);
   }
@@ -98,13 +101,23 @@ export class Namespace {
     return new Namespace(this.env, path, args);
   }
 
-  public equalTo(ns: Namespace, alsoArgs: boolean = false) {
-    return this.toString(alsoArgs) === ns.toString(alsoArgs);
+  /**
+   * Returns whether the given namespace object refers to the same namespace
+   * as the current object.
+   *
+   * @param ns The namespace to check against this one.
+   * @param args Whether to also check that the arguments are the same.
+   * @returns Whether the namespaces are equal.
+   */
+  public equalTo(ns: Namespace, args: boolean = false): boolean {
+    return this.toString(args) === ns.toString(args);
   }
 
   /**
    * Converts the list of namespace names into a single string.
    * Can optionally include arguments in string.
+   *
+   * @param args Whether to also output the arguments in the string.
    */
   public toString(args: boolean = false): string {
     const nss = this.env.options.namespaceSeparator; // shortcut

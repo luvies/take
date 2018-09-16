@@ -46,6 +46,10 @@ const DefaultShellOptions = {
   } as SpawnOptions
 };
 
+/**
+ * The default options used for executing commands using the shell utility function.
+ * These also apply to exec and its variations unless otherwise stated.
+ */
 export type ShellOptions = typeof DefaultShellOptions;
 
 /**
@@ -98,6 +102,9 @@ export interface Options {
   allDepsAbsolute: boolean;
 }
 
+/**
+ * Constructs the default options object.
+ */
 export function DefaultOptions(): Options {
   return {
     namespaceSeparator: ':',

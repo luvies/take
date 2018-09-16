@@ -5,11 +5,11 @@ import { Environment } from './environment';
 import { ShellOptions } from './options';
 import { TakeError } from './take-error';
 
-// since this class is purely for mixing into the TakefileEnv object,
+// since this class is mostly for mixing into the TakefileEnv object,
 // the private members are all prefixed with `__` to reduce the pollution
 // of the object.
 /**
- * Provides various utilities that Takefiles can make use of.
+ * Provides various utilities that Take and Takefiles can make use of.
  */
 export class Utils {
   public static copy(old: Utils): Utils {

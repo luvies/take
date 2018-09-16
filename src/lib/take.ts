@@ -46,9 +46,9 @@ export type TakefileEnv = Utils & {
  */
 export class Take {
   /**
-   * Creates a Take instance using the command line arguments.
+   * Creates and runs a Take instance using the command line arguments.
    *
-   * @param clienv The object used to pass info back out to the cli caller.
+   * @param clienv The object used to pass info back out to the cli bootstrapper.
    */
   public static async runFromCli(clienv: CliEnv): Promise<void> {
     // load arguments
@@ -130,6 +130,14 @@ export class Take {
     }
   }
 
+  /**
+   * Create a new take instance from the given setup.
+   *
+   * @param path The path to load the Takefile from.
+   * @param fromDir Whether to search a directory for the Takefile, or use the path exactly as the file.
+   * @param envSetup A function used to adjust the Environment object before it is used.
+   * @returns The Take instance.
+   */
   public static async newInstance(
     path?: string,
     fromDir: boolean = true,
@@ -155,6 +163,9 @@ export class Take {
     return new Take(path, env, targets, runner);
   }
 
+  /**
+   * Creates the TakefileEnv object.
+   */
   private static createTakefileEnv(env: Environment): TakefileEnv {
     // make a copy of the utils object so we don't alter the current one
     return Object.assign(Utils.copy(env.utils),
@@ -200,6 +211,8 @@ export class Take {
   /**
    * Returns a list of lines that can be printed to list all the targets
    * currently loaded.
+   *
+   * @returns The lines that can be printed to the console.
    */
   public getTargetListString(): string[] {
     // build target list
@@ -254,6 +267,8 @@ export class Take {
   /**
    * Returns the list of lines that can be printed to show the dependency tree
    * for a given target.
+   *
+   * @returns The lines that can be printed to the console.
    */
   public getTargetDepTreeString(ns: Namespace): string[] {
     // build nodes

@@ -1,7 +1,7 @@
 import { Environment } from './environment';
 
 /**
- * A custom error used to distinguish between error thrown by Take
+ * A custom error used to distinguish between errors thrown by Take
  * and unhandled errors due to bad logic.
  */
 export class TakeError extends Error {
@@ -17,6 +17,10 @@ export class TakeError extends Error {
   public constructor(
     private env: Environment,
     message?: any,
+    /**
+     * If this error was caused by another one, it can be stored here for printing to
+     * stderr later.
+     */
     public internalError?: Error | string
   ) {
     super(message);
@@ -27,7 +31,7 @@ export class TakeError extends Error {
    *
    * @param outputInternal Whether to also output the internal error if it was given.
    */
-  public log(outputInternal: boolean = true) {
+  public log(outputInternal: boolean = true): void {
     this.env.utils.logError(`${this.env.utils.useEmoji('💥  ')}Error: ${this.message}`);
     if (outputInternal && this.internalError) {
       this.env.utils.logError('Internal error:');
