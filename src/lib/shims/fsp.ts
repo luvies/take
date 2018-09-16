@@ -19,8 +19,6 @@ export const chmod = promisify(fs.chmod);
 export const chown = promisify(fs.chown);
 export const close = promisify(fs.close);
 export const copyFile = promisify(fs.copyFile);
-export const createReadStream = promisify(fs.createReadStream);
-export const createWriteStream = promisify(fs.createWriteStream);
 export const exists = promisify(fs.exists);
 export const fchmod = promisify(fs.fchmod);
 export const fchown = promisify(fs.fchown);
@@ -43,9 +41,15 @@ export const stat = promisify(fs.stat);
 export const symlink = promisify(fs.symlink);
 export const truncate = promisify(fs.truncate);
 export const unlink = promisify(fs.unlink);
-export const unwatchFile = promisify(fs.unwatchFile);
 export const utimes = promisify(fs.utimes);
-export const watch = promisify(fs.watch);
-export const watchFile = promisify(fs.watchFile);
 export const write = promisify(fs.write);
 export const writeFile = promisify(fs.writeFile);
+
+// functions that do not have callbacks
+// these are still kept here so that the fsp module mimics the
+// fs module exactly
+export const createReadStream = fs.createReadStream;
+export const createWriteStream = fs.createWriteStream;
+export const unwatchFile = fs.unwatchFile;
+export const watch = fs.watch;
+export const watchFile = fs.watchFile;
