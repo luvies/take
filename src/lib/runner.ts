@@ -3,7 +3,6 @@ import { Environment } from './environment';
 import { Namespace } from './namespace';
 import { TakeError } from './take-error';
 import { TargetBatchTree } from './tgt/batch';
-import { TargetMatchData } from './tgt/config';
 import { RootTargetIndex, RootTargetName } from './tgt/const';
 import { Target } from './tgt/target';
 
@@ -22,7 +21,7 @@ export interface NodeExecData {
   /**
    * The matched name of the target.
    */
-  match: TargetMatchData;
+  match: string[];
 }
 
 /**
@@ -189,15 +188,12 @@ export class Runner {
       return {
         target: this.targets.exact[RootTargetIndex],
         args: name.args,
-        match: {
-          full: '',
-          groups: []
-        }
+        match: ['']
       };
     } else {
       // set up current state
       let ctarget: Target;
-      let cmatch: TargetMatchData;
+      let cmatch: string[];
       let targets: TargetBatchTree = this.targets;
 
       // search for target in each part of the namespace
@@ -225,11 +221,8 @@ export class Runner {
    */
   private searchForTarget(
     cns: string, targets: TargetBatchTree, name: Namespace
-  ): [Target, TargetMatchData, TargetBatchTree] {
-    const match: TargetMatchData = {
-      full: cns,
-      groups: []
-    };
+  ): [Target, string[], TargetBatchTree] {
+    const match: string[] = [cns];
 
     if (targets.exact[cns]) {
       return [targets.exact[cns], match, targets.exact[cns].children];
@@ -239,8 +232,7 @@ export class Runner {
     for (const re of targets.regex) {
       const rmatch = cns.match(re.rule);
       if (rmatch) {
-        match.groups = rmatch.slice(1);
-        return [re.target, match, re.target.children];
+        return [re.target, rmatch, re.target.children];
       }
     }
 

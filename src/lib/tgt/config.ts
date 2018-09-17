@@ -14,21 +14,6 @@ export enum TargetMatch {
 export type TargetConfigBatch = Record<string, TargetConfig>;
 
 /**
- * The spec for the target match data.
- */
-export interface TargetMatchData {
-  /**
-   * The full match.
-   */
-  full: string;
-  /**
-   * The groups that were matched by the regex matcher. If not using regex, then this
-   * will just be an empty list.
-   */
-  groups: string[];
-}
-
-/**
  * The spec for the target config object.
  */
 export interface TargetConfig {
@@ -79,11 +64,11 @@ export interface TargetConfig {
      */
     ns: Namespace;
     /**
-     * The matched target name. For exact matched targets, this is the same as the target name
-     * in the config object, but for dynamically matched targets, it will be the user-provided target
-     * name.
+     * The match array for the target name. For exact & glob matched targets, it is a length 1
+     * array with the full match at index 0, for regex matched targets, it is the RegExpMatchArray
+     * object that was matched (i.e. index 0 is the full match, the rest of the list are the groups).
      */
-    match: TargetMatchData;
+    match: string[];
   };
   /**
    * The function used to perform the target.

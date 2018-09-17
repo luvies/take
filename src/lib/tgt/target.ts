@@ -2,7 +2,7 @@ import { Environment } from '../environment';
 import { Namespace } from '../namespace';
 import { TakeError } from '../take-error';
 import { ExactTargetBatch, GlobTargetBatch, RegexTargetBatch, TargetBatchTree } from './batch';
-import { TargetConfig, TargetConfigBatch, TargetMatch, TargetMatchData } from './config';
+import { TargetConfig, TargetConfigBatch, TargetMatch } from './config';
 
 /**
  * Contains information about a target and its children, and can perform the execution.
@@ -152,7 +152,7 @@ export class Target {
    * Executes the target's suppied execute function if it was given.
    * If the function returns an awaitable object, it is awaited before returning.
    */
-  public async execute(match: TargetMatchData, args: string[] = []): Promise<void> {
+  public async execute(match: string[], args: string[] = []): Promise<void> {
     if (this.config.execute) {
       // create the run data
       this.config.run = {
