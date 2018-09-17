@@ -1,4 +1,4 @@
-import minimatch from 'minimatch';
+import { isMatch } from 'micromatch';
 import { Environment } from './environment';
 import { Namespace } from './namespace';
 import { TakeError } from './take-error';
@@ -246,7 +246,7 @@ export class Runner {
 
     // search in glob matches
     for (const glob of targets.glob) {
-      if (minimatch(cns, glob.rule)) {
+      if (isMatch(cns, glob.rule)) {
         return [glob.target, match, glob.target.children];
       }
     }
