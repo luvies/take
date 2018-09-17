@@ -8,7 +8,7 @@ export class TakeError extends Error {
   /**
    * Returns whether the given variable is an instance of UserError.
    */
-  public static isTakeError(error: any): error is TakeError {
+  public static isTakeError(error: unknown): error is TakeError {
     return error instanceof TakeError;
   }
 
