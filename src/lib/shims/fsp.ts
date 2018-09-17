@@ -1,7 +1,6 @@
 /**
- * A shim lib for providing access to promise version of fs methods until the
- * fs.promises API is stable.
- * This doesn't intend to polyfil exactly, it is purely an iteration over the current
+ * A shim lib for providing access to promise version of fs that is backwards compatible.
+ * This doesn't intend to polyfill exactly, it is purely an iteration over the current
  * methods.
  */
 
@@ -47,7 +46,7 @@ export const writeFile = promisify(fs.writeFile);
 
 // functions that do not have callbacks
 // these are still kept here so that the fsp module mimics the
-// fs module exactly
+// fs module closely
 export const createReadStream = fs.createReadStream;
 export const createWriteStream = fs.createWriteStream;
 export const unwatchFile = fs.unwatchFile;
