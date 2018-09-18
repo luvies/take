@@ -8,7 +8,7 @@
   },
   "author": "luvies",
   "license": "MIT",
-  "repository": "https://github.com/luvies/take",
+  "repository": "luvies/take",
   "dependencies": {
     "@types/micromatch": "^3.1.0",
     "argparse": "^1.0.10",
