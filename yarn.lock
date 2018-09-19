@@ -679,6 +679,12 @@ form-data@~2.3.2:
     combined-stream "1.0.6"
     mime-types "^2.1.12"
 
+format-list@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/format-list/-/format-list-1.0.0.tgz#aa3da85d850063b0a8698ba1d5c7dea259d31e43"
+  dependencies:
+    mapped-replace "^1.0.3"
+
 format-tree@^1.0.2, format-tree@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/format-tree/-/format-tree-1.0.3.tgz#b93554a559bb1f79495bd084478fed7564627298"
@@ -1155,6 +1161,12 @@ map-visit@^1.0.0:
   resolved "https://registry.yarnpkg.com/map-visit/-/map-visit-1.0.0.tgz#ecdca8f13144e660f1b5bd41f12f3479d98dfb8f"
   dependencies:
     object-visit "^1.0.0"
+
+mapped-replace@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/mapped-replace/-/mapped-replace-1.0.3.tgz#2b57c8592c4212aa5b7d06c61fc32b83b2dc6ae3"
+  dependencies:
+    escape-string-regexp "^1.0.5"
 
 md5-hex@^2.0.0:
   version "2.0.0"

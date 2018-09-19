@@ -190,7 +190,52 @@ describe('Namespace', function() {
       expect(root.resolve('target1:target2:|:|:target3').toString()).to.be.equal(':target3');
       expect(root.resolve('target1:target2:|:|:target3:|').toString()).to.be.equal(':');
     });
-  })
+  });
+
+  describe('#format', function() {
+    let env: Environment;
+    let root: Namespace;
+
+    beforeEach(function() {
+      env = new Environment(DefaultOptions());
+      root = Namespace.getRoot(env);
+    });
+
+    it('should leave namespaces with no tags in unchanged', function() {
+      expect(root.resolve('').format(['a', 'b']).toString())
+        .to.be.equal(':');
+      expect(root.resolve('target1').format(['a', 'b']).toString())
+        .to.be.equal(':target1');
+      expect(root.resolve('target1:target2').format(['a', 'b']).toString())
+        .to.be.equal(':target1:target2');
+      expect(root.resolve('target1:target2:target3').format(['a', 'b']).toString())
+        .to.be.equal(':target1:target2:target3');
+    });
+
+    it('should format the tags in correctly', function() {
+      expect(root.resolve('target$0').format(['a', 'b']).toString())
+        .to.be.equal(':targeta');
+      expect(root.resolve('target$0:target$1').format(['a', 'b']).toString())
+        .to.be.equal(':targeta:targetb');
+      expect(root.resolve('target$1:target$3:target$2').format(['a', 'b', 'c', 'd']).toString())
+        .to.be.equal(':targetb:targetd:targetc');
+      expect(root.resolve('$1target$1:$2target$1:target$2').format(['a', 'b', 'c', 'd']).toString())
+        .to.be.equal(':btargetb:ctargetb:targetc');
+    });
+
+    it('should leave tags unchanged if there isn\'t a matching list item', function() {
+      expect(root.resolve('target$0').format([]).toString())
+        .to.be.equal(':target$0');
+      expect(root.resolve('target$1').format(['a']).toString())
+        .to.be.equal(':target$1');
+      expect(root.resolve('target$2').format(['a', 'b']).toString())
+        .to.be.equal(':target$2');
+      expect(root.resolve('target$5:target$2').format(['a', 'b']).toString())
+        .to.be.equal(':target$5:target$2');
+      expect(root.resolve('target$3:target$4:target$5').format(['a', 'b', 'c']).toString())
+        .to.be.equal(':target$3:target$4:target$5');
+    });
+  });
 
   describe('#equalTo', function() {
     let root: Namespace;

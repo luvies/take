@@ -1,3 +1,4 @@
+import formatList from 'format-list';
 import { Environment } from './environment';
 import { TakeError } from './take-error';
 
@@ -99,6 +100,20 @@ export class Namespace {
     }
 
     return new Namespace(this.env, path, args);
+  }
+
+  /**
+   * Formats a list into the namespace, replacing `$n` tags with the list values.
+   *
+   * @param fmt The list of values to format into the namespace.
+   * @returns The formatted namespace.
+   */
+  public format(fmt: string[]): Namespace {
+    return new Namespace(
+      this.env,
+      this.path.map(p => formatList(p, fmt, { tagStart: 0 })),
+      this.args.slice()
+    );
   }
 
   /**

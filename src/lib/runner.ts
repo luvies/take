@@ -126,7 +126,7 @@ export class Runner {
       for (const dep of node.execData.target.deps) {
         // if we should, build the dependencies
         if (node.execute && !node.cyclic) {
-          const [depNode, depSafe] = this.buildDependencyTree(dep, ns, path, foundTargets);
+          const [depNode, depSafe] = this.buildDependencyTree(dep.format(node.execData.match), ns, path, foundTargets);
           safe = safe && depSafe;
           node.leaves.push(depNode);
         }

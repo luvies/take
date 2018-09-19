@@ -198,7 +198,9 @@ module.exports = async (take) => {
         'internal',
         ':crash:test',
         ':target3',
-        ':'
+        ':',
+        ':regex.Re',
+        ':custom-match.m'
       ],
       children: {
         internal: {
@@ -215,7 +217,6 @@ module.exports = async (take) => {
         await new Promise(resolve => setTimeout(resolve, 65 * 1000));
       }
     },
-    // @ts-ignore
     [/(.*)\.re$/i]: {
       match: 'regex',
       async execute() {
@@ -227,6 +228,10 @@ module.exports = async (take) => {
       async execute() {
         take.log('glob:', this.run.match);
       }
+    },
+    [/(.*)\.m$/i]: {
+      match: 'regex',
+      deps: ':$1.test'
     }
   };
 };
