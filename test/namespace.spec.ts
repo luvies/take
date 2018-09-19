@@ -76,6 +76,12 @@ describe('Namespace', function() {
       expect(root.resolve('target1:target2').names).to.be.eql(['target1', 'target2']);
       expect(root.resolve('target1:target2:target3').names).to.be.eql(['target1', 'target2', 'target3']);
     });
+
+    it('should not include the arguments in any item', function() {
+      expect(root.resolve('target1[a]').names).to.be.eql(['target1']);
+      expect(root.resolve('target1:target2[a,b]').names).to.be.eql(['target1', 'target2']);
+      expect(root.resolve('target1:target2:target3[a,b,c]').names).to.be.eql(['target1', 'target2', 'target3']);
+    });
   });
 
   describe('#resolve', function() {
@@ -92,7 +98,7 @@ describe('Namespace', function() {
         .to.be.equal(':target1:target2:target3');
       expect(root.resolve('target1').resolve('target2').resolve('target3').resolve('target4').toString())
         .to.be.equal(':target1:target2:target3:target4');
-    })
+    });
 
     it('should resolve to itself if empty string passed in', function() {
       expect(root.resolve('').toString()).to.be.equal(':');
@@ -249,6 +255,12 @@ describe('Namespace', function() {
       expect(root.resolve('target1').equalTo(root.resolve('target1'))).to.be.true;
       expect(root.resolve('target1:target2').equalTo(root.resolve('target1:target2'))).to.be.true;
       expect(root.resolve('target1:target2:target3').equalTo(root.resolve('target1:target2:target3'))).to.be.true;
+    });
+
+    it('should return false for non-equal namespaces', function() {
+      expect(root.resolve('target1').equalTo(root.resolve('target2'))).to.be.false;
+      expect(root.resolve('target1:target3').equalTo(root.resolve('target1:target2'))).to.be.false;
+      expect(root.resolve('target1:target5:target3').equalTo(root.resolve('target1:target2:target3'))).to.be.false;
     });
   });
 

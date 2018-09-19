@@ -57,7 +57,7 @@ export class Namespace {
     const nss = this.env.options.namespaceSeparator; // shortcut
 
     // extract arguments and name
-    const match = fullName.match(/^(.*)(?:\[([^[\]]*)\])?$/);
+    const match = fullName.match(/^(.*?)(?:\[([^[\]]*)\])?$/);
     let name: string;
     let args: string[];
     if (match) {
