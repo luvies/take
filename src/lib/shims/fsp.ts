@@ -52,3 +52,57 @@ export const createWriteStream = fs.createWriteStream;
 export const unwatchFile = fs.unwatchFile;
 export const watch = fs.watch;
 export const watchFile = fs.watchFile;
+
+// helper methods
+
+/**
+ * Returns whether a directory exists, and the fs.Stats object used for the check if
+ * it does exist. If it doesn't, the second value will be `undefined`.
+ *
+ * @param path The path to check.
+ * @returns Whether the directory exists, and the fs.Stats object if it does.
+ */
+export async function directoryExistsStats(path: string): Promise<[boolean, fs.Stats?]> {
+  try {
+    const dstats = await stat(path);
+    return [dstats.isDirectory(), await stat(path)];
+  } catch {
+    return [false, undefined];
+  }
+}
+
+/**
+ * Returns whether a directory exists.
+ *
+ * @param path The path to check.
+ * @returns Whether the directory exists.
+ */
+export async function directoryExists(path: string): Promise<boolean> {
+  return (await directoryExistsStats(path))[0];
+}
+
+/**
+ * Returns whether a file exists, and the fs.Stats object used for the check if
+ * it does exist. If it doesn't, the second value will be `undefined`.
+ *
+ * @param path The path to check.
+ * @returns Whether the file exists, and the fs.Stats object if it does.
+ */
+export async function fileExistsStats(path: string): Promise<[boolean, fs.Stats?]> {
+  try {
+    const dstats = await stat(path);
+    return [dstats.isFile(), await stat(path)];
+  } catch {
+    return [false, undefined];
+  }
+}
+
+/**
+ * Returns whether a file exists.
+ *
+ * @param path The path to check.
+ * @returns Whether the file exists.
+ */
+export async function fileExists(path: string): Promise<boolean> {
+  return (await fileExistsStats(path))[0];
+}

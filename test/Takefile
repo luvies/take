@@ -232,6 +232,75 @@ module.exports = async (take) => {
     [/(.*)\.m$/i]: {
       match: 'regex',
       deps: ':$1.test'
+    },
+    dirs: {
+      directories: 'test',
+      children: {
+        a: {
+          directories: 'a/b'
+        },
+        b: {
+          directories: 'a/c/d'
+        }
+      }
+    },
+    files: {
+      children: {
+        fail: {
+          files: {
+            input: 'Takefile.ts'
+          }
+        },
+        succ: {
+          files: {
+            input: [
+              'Takefile'
+            ]
+          }
+        },
+        exists: {
+          files: {
+            output: 'Takefile'
+          },
+          async execute() {
+            take.log('fired');
+          }
+        },
+        notExist: {
+          files: {
+            output: 'non-exist'
+          },
+          async execute() {
+            take.log('fired');
+          }
+        },
+        newer: {
+          files: {
+            input: 'Takefile',
+            output: 'helpers.ts'
+          },
+          async execute() {
+            take.log('fired');
+          }
+        },
+        older: {
+          files: {
+            input: 'helpers.ts',
+            output: 'Takefile'
+          },
+          async execute() {
+            take.log('fired');
+          }
+        },
+        self: {
+          files: {
+            input: true
+          },
+          async execute() {
+            take.log('fired');
+          }
+        }
+      }
     }
   };
 };

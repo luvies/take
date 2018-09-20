@@ -37,6 +37,8 @@ export interface TargetConfig {
   /**
    * The dependency or list of dependencies that need to be ran before
    * this target.
+   *
+   * The strings you pass in are formatted against the target name match.
    */
   deps?: string | string[];
   /**
@@ -53,6 +55,41 @@ export interface TargetConfig {
    * is ran first.
    */
   depParent?: boolean;
+  /**
+   * The input and output files that this target depends on and creates.
+   * If any of the inputs are missing, execution is aborted. If any of the outputs
+   * are missing, or any of the inputs are newer than the outputs, then the target
+   * is executed. If no outputs are specified, the target is always executed.
+   * Both properties will use the current working directory as the default base path.
+   */
+  files?: {
+    /**
+     * The input files this target depends on. If any are missing, execution is aborted.
+     * If any of these files are newer than any of the output files, then the target
+     * is executed (it is executed regardless if no output files are given). You can
+     * pass `true` to this property to use the target's name.
+     *
+     * The strings you pass in are formatted against the target name match.
+     */
+    input?: boolean | string | string[];
+    /**
+     * The output files this target creates. If any are missing, or any of the input
+     * files are newer that any of the output files, then this target is executed. If
+     * no input files are given, then only existence is checked. You can pass `true`
+     * to this property to use the target's name.
+     *
+     * The strings you pass in are formatted against the target name match.
+     */
+    output?: boolean | string | string[];
+  };
+  /**
+   * The list of directories that will be created if they do not already exist.
+   * It uses the current working directory. You can pass in full paths and each
+   * directory in the path will be checked, and created if it doesn't exist.
+   *
+   * The strings you pass in are formatted against the target name match.
+   */
+  directories?: boolean | string | string[];
   /**
    * This is set by Take when building the targets. It contains various properties that
    * describe the current run, like the executing namespace and the matched name
