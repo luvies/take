@@ -111,7 +111,7 @@ export class Namespace {
   public format(fmt: string[]): Namespace {
     return new Namespace(
       this.env,
-      this.path.map(p => formatList(p, fmt, { tagStart: 0 })),
+      this.path.map(p => formatList(p, fmt)),
       this.args.slice()
     );
   }
