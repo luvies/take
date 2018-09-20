@@ -142,6 +142,10 @@ describe('Namespace', function() {
       expect(root.resolve('target1:target2:^:^:^').toString()).to.be.equal(':');
       expect(root.resolve('target1:^:target2:target3:^:^:^').toString()).to.be.equal(':');
     });
+
+    it('should throw an error on invalid target names', function() {
+      expect(() => root.resolve('target1:target \n 2')).to.throw()
+    });
   });
 
   describe('#resolve', function() {
