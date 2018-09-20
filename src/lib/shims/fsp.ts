@@ -66,7 +66,7 @@ export async function directoryExistsStats(path: string): Promise<[boolean, fs.S
   try {
     const dstats = await stat(path);
     return [dstats.isDirectory(), await stat(path)];
-  } catch {
+  } catch (err) {
     return [false, undefined];
   }
 }
@@ -92,7 +92,7 @@ export async function fileExistsStats(path: string): Promise<[boolean, fs.Stats?
   try {
     const dstats = await stat(path);
     return [dstats.isFile(), await stat(path)];
-  } catch {
+  } catch (err) {
     return [false, undefined];
   }
 }
