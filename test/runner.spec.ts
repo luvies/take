@@ -1,10 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Environment } from '../src/lib/environment';
-import { DefaultOptions } from '../src/lib/options';
-import { Runner } from '../src/lib/runner';
-import { TargetConfigBatch } from '../src/lib/tgt/config';
-import { Target } from '../src/lib/tgt/target';
+import { DefaultOptions, Environment, Runner, Target, TargetConfigBatch } from '../src/lib';
 
 describe('Runner', function() {
   // instance variables

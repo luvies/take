@@ -1,8 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Environment } from '../src/lib/environment';
-import { DefaultOptions } from '../src/lib/options';
-import { TakeError } from '../src/lib/take-error';
+import { DefaultOptions, Environment, TakeError } from '../src/lib';
 
 describe('TakeError', function() {
   describe('#isTakeError', function() {

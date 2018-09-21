@@ -1,8 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Environment } from '../src/lib/environment';
-import { DefaultOptions } from '../src/lib/options';
-import { Target } from '../src/lib/tgt/target';
+import { DefaultOptions, Environment, Target } from '../src/lib';
 
 describe('Task', function() {
   let env: Environment;
