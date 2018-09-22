@@ -1,0 +1,15 @@
+{
+  "defaultSeverity": "warning",
+  "extends": [
+    "../tslint.json"
+  ],
+  "linterOptions": {
+    "exclude": []
+  },
+  "rules": {
+    "object-literal-key-quotes": false,
+    "only-arrow-functions": false,
+    "no-unused-expression": false,
+    "no-string-literal": false
+  }
+}

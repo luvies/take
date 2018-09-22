@@ -19,7 +19,7 @@ describe('Runner', function() {
 
     // build sample config
     const execute = (target: any) => (...args: string[]) => {
-      executions.push({ target: target.toString(), args })
+      executions.push({ target: target.toString(), args });
     };
     conf = {
       '': { execute: execute('') },
@@ -113,24 +113,24 @@ describe('Runner', function() {
     await runner.execute(env.root.resolve(ns + argString));
   }
 
-  describe('#construct', function() {
+  describe('#constructor', function() {
     beforeEach(initEach);
 
     it('should construct', function() {
       expect(runner).to.be.an.instanceOf(Runner);
     });
-  })
+  });
 
   describe('#execute', function() {
     beforeEach(initEach);
 
     it('should execute root as empty name target', async function() {
-      await exec()
+      await exec();
 
       expect(executions).to.be.eql([
         { target: '', args: [] }
       ]);
-    })
+    });
 
     it('should execute top-level complex target', async function() {
       await exec('1');
@@ -138,7 +138,7 @@ describe('Runner', function() {
       expect(executions).to.be.eql([
         { target: '1', args: [] }
       ]);
-    })
+    });
 
     it('should execute second-level complex target', async function() {
       await exec(':1:2');
@@ -146,7 +146,7 @@ describe('Runner', function() {
       expect(executions).to.be.eql([
         { target: '2', args: [] }
       ]);
-    })
+    });
 
     it('should execute a top-level target with a single string dependent', async function() {
       await exec(':10');
@@ -194,5 +194,5 @@ describe('Runner', function() {
         { target: '21', args: [] }
       ]);
     });
-  })
+  });
 });

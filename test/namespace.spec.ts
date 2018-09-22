@@ -4,9 +4,11 @@ import { DefaultOptions, Environment, Namespace } from '../src/lib';
 
 describe('Namespace', function() {
   let env: Environment;
+  let root: Namespace;
 
   beforeEach(function() {
     env = new Environment(DefaultOptions());
+    root = Namespace.getRoot(env);
   });
 
   describe('#getRoot', function() {
@@ -19,15 +21,9 @@ describe('Namespace', function() {
   });
 
   describe('#parent', function() {
-    let root: Namespace;
-
-    beforeEach(function() {
-      root = Namespace.getRoot(env);
-    });
-
     it('should return itself if it is the root', function() {
       expect(root.parent).to.be.equal(root);
-    })
+    });
 
     it('should return the next namespace up', function() {
       expect(root.resolve('target1').parent.toString()).to.be.equal(root.toString());
@@ -41,12 +37,6 @@ describe('Namespace', function() {
   });
 
   describe('#isRoot', function() {
-    let root: Namespace;
-
-    beforeEach(function() {
-      root = Namespace.getRoot(env);
-    });
-
     it('should return true for root namespace', function() {
       expect(root.isRoot).to.be.true;
     });
@@ -59,12 +49,6 @@ describe('Namespace', function() {
   });
 
   describe('#names', function() {
-    let root: Namespace;
-
-    beforeEach(function() {
-      root = Namespace.getRoot(env);
-    });
-
     it('should return an empty list for root', function() {
       expect(root.names).to.be.eql([]);
     });
@@ -83,12 +67,6 @@ describe('Namespace', function() {
   });
 
   describe('#resolve', function() {
-    let root: Namespace;
-
-    beforeEach(function() {
-      root = Namespace.getRoot(env);
-    });
-
     it('should chain', function() {
       expect(root.resolve('target1').resolve('target2').toString())
         .to.be.equal(':target1:target2');
@@ -106,7 +84,7 @@ describe('Namespace', function() {
     });
 
     it('should use given working namespace', function() {
-      let ns = root.resolve('ns');
+      const ns = root.resolve('ns');
       expect(root.resolve('target1', ns).toString()).to.be.equal(':ns:target1');
       expect(root.resolve('target1:target2', ns).toString()).to.be.equal(':ns:target1:target2');
       expect(root.resolve('target1:target2:target3', ns).toString()).to.be.equal(':ns:target1:target2:target3');
@@ -117,7 +95,7 @@ describe('Namespace', function() {
       expect(root.resolve(':target1:target2').toString()).to.be.equal(':target1:target2');
       expect(root.resolve(':target1:target2:target3').toString()).to.be.equal(':target1:target2:target3');
 
-      let ns = root.resolve('ns');
+      const ns = root.resolve('ns');
       expect(root.resolve(':target1', ns).toString()).to.be.equal(':target1');
       expect(root.resolve(':target1:target2', ns).toString()).to.be.equal(':target1:target2');
       expect(root.resolve(':target1:target2:target3', ns).toString()).to.be.equal(':target1:target2:target3');
@@ -142,19 +120,11 @@ describe('Namespace', function() {
     });
 
     it('should throw an error on invalid target names', function() {
-      expect(() => root.resolve('target1:target \n 2')).to.throw()
+      expect(() => root.resolve('target1:target \n 2')).to.throw();
     });
   });
 
   describe('#resolve', function() {
-    let env: Environment;
-    let root: Namespace;
-
-    beforeEach(function() {
-      env = new Environment(DefaultOptions());
-      root = Namespace.getRoot(env);
-    });
-
     it('should respect alternate namespace separators', function() {
       env.options.namespaceSeparator = '/';
       expect(root.resolve('target1').resolve('target2').toString())
@@ -201,14 +171,6 @@ describe('Namespace', function() {
   });
 
   describe('#format', function() {
-    let env: Environment;
-    let root: Namespace;
-
-    beforeEach(function() {
-      env = new Environment(DefaultOptions());
-      root = Namespace.getRoot(env);
-    });
-
     it('should leave namespaces with no tags in unchanged', function() {
       expect(root.resolve('').format(['a', 'b']).toString())
         .to.be.equal(':');
@@ -246,12 +208,6 @@ describe('Namespace', function() {
   });
 
   describe('#equalTo', function() {
-    let root: Namespace;
-
-    beforeEach(function() {
-      root = Namespace.getRoot(env);
-    });
-
     it('should return true for equal namespaces', function() {
       expect(root.equalTo(root)).to.be.true;
       expect(root.resolve('target1').equalTo(root.resolve('target1'))).to.be.true;
@@ -267,12 +223,6 @@ describe('Namespace', function() {
   });
 
   describe('#toString', function() {
-    let root: Namespace;
-
-    beforeEach(function() {
-      root = Namespace.getRoot(env);
-    });
-
     it('should return a full qualified namespace string', function() {
       expect(root.toString()).to.be.equal(':');
       expect(root.resolve('target1').toString()).to.be.equal(':target1');

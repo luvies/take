@@ -4,5 +4,8 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
     }
+  },
+  "[javascript]": {
+    "editor.formatOnSave": false
   }
 }

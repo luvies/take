@@ -64,6 +64,7 @@ module.exports = (take) => {
       desc: 'Lints the src/ folder',
       async execute() {
         await take.exec('tslint', '--project', '.');
+        await take.exec('tslint', '--project', 'test');
       }
     },
     publish: {

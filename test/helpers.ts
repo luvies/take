@@ -1,7 +1,9 @@
-import { TargetBatch } from "../src/lib/target";
+import { TargetBatchTree } from '../src/lib';
 
-export function sampleConfig(): TargetBatch {
+export function sampleConfig(): TargetBatchTree {
   return {
-
+    exact: {},
+    regex: [],
+    glob: []
   };
-};
+}

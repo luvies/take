@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { DefaultOptions, Environment, Target } from '../src/lib';
 
-describe('Task', function() {
+describe('Target', function() {
   let env: Environment;
 
   function initEach() {
@@ -12,7 +12,7 @@ describe('Task', function() {
   describe('#constructor', function() {
     beforeEach(initEach);
 
-    it('should work', function() {
+    it('should construct', function() {
       const task = new Target('test', {}, env);
       expect(task).to.be.instanceOf(Target);
     });
