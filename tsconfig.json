@@ -12,13 +12,6 @@
     "alwaysStrict": true,
     "moduleResolution": "node",
     "baseUrl": ".",
-    "paths": {
-      "string-length": ["types/string-length"]
-    },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ],
     "esModuleInterop": true
   },
   "include": [
