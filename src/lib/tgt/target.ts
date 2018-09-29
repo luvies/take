@@ -166,7 +166,7 @@ export class Target {
             if (Array.isArray(config.files.output)) {
               this.files.output = config.files.output;
             } else {
-              throw new TakeError(env, 'files.out can only be a string or list of strings');
+              throw new TakeError(env, 'files.out can only be a boolean, string or list of strings');
             }
             break;
         }
