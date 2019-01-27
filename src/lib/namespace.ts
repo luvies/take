@@ -16,7 +16,7 @@ export class Namespace {
   private constructor(
     private env: Environment,
     private path: string[],
-    public args: string[] = []
+    public args: string[] = [],
   ) { }
 
   /**
@@ -68,7 +68,7 @@ export class Namespace {
     }
 
     // check if this is an absolute namespace first
-    let root: boolean = false;
+    let root = false;
     if (name.length) {
       if (name[0] === nss) {
         root = true;
@@ -112,7 +112,7 @@ export class Namespace {
     return new Namespace(
       this.env,
       this.path.map(p => formatList(p, fmt)),
-      this.args.slice()
+      this.args.slice(),
     );
   }
 
@@ -124,7 +124,7 @@ export class Namespace {
    * @param args Whether to also check that the arguments are the same.
    * @returns Whether the namespaces are equal.
    */
-  public equalTo(ns: Namespace, args: boolean = false): boolean {
+  public equalTo(ns: Namespace, args = false): boolean {
     return this.toString(args) === ns.toString(args);
   }
 
@@ -134,7 +134,7 @@ export class Namespace {
    *
    * @param args Whether to also output the arguments in the string.
    */
-  public toString(args: boolean = false): string {
+  public toString(args = false): string {
     const nss = this.env.options.namespaceSeparator; // shortcut
     let argString = '';
     if (args && this.args.length) {

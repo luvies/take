@@ -27,9 +27,9 @@ export class Environment {
     /**
      * Whether emojis should be enabled or disabled.
      */
-    emojis?: boolean
+    emojis?: boolean,
   } = {
-      suppress: []
+      suppress: [],
     };
 
   public constructor(
@@ -37,7 +37,7 @@ export class Environment {
      * The current options for the execution environment. This is given to the
      * Takefile exported function so it can set up the options for execution.
      */
-    public options: Options
+    public options: Options,
   ) {
     this.root = Namespace.getRoot(this);
     this.utils = new Utils(this);

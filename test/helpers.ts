@@ -4,6 +4,6 @@ export function sampleConfig(): TargetBatchTree {
   return {
     exact: {},
     regex: [],
-    glob: []
+    glob: [],
   };
 }

@@ -57,7 +57,7 @@ export interface DependencyNode {
 export class Runner {
   public constructor(
     private env: Environment,
-    private targets: TargetBatchTree
+    private targets: TargetBatchTree,
   ) { }
 
   /**
@@ -87,7 +87,7 @@ export class Runner {
    */
   public buildDependencyTree(
     ns: Namespace, parent?: Namespace,
-    path: Namespace[] = [], foundTargets: Record<string, boolean> = {}
+    path: Namespace[] = [], foundTargets: Record<string, boolean> = {},
   ): [DependencyNode, boolean] {
     // get copy of path to prevent mutation
     path = path.slice();
@@ -103,7 +103,7 @@ export class Runner {
       execData: this.getTask(ns),
       leaves: [],
       execute: false,
-      cyclic: false
+      cyclic: false,
     };
 
     // whether the tree is safe to execute
@@ -188,7 +188,7 @@ export class Runner {
       return {
         target: this.targets.exact[RootTargetIndex],
         args: name.args,
-        match: ['']
+        match: [''],
       };
     } else {
       // set up current state
@@ -203,9 +203,11 @@ export class Runner {
       }
 
       return {
+        // tslint:disable-next-line:no-unnecessary-type-assertion
         target: ctarget!,
         args: name.args,
-        match: cmatch!
+        // tslint:disable-next-line:no-unnecessary-type-assertion
+        match: cmatch!,
       };
     }
   }
@@ -220,7 +222,7 @@ export class Runner {
    * @returns A tuple with the found Target, TargetMatchData and next TargetBatchTree object.
    */
   private searchForTarget(
-    cns: string, targets: TargetBatchTree, name: Namespace
+    cns: string, targets: TargetBatchTree, name: Namespace,
   ): [Target, string[], TargetBatchTree] {
     const match: string[] = [cns];
 

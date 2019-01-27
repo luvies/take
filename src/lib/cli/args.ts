@@ -21,7 +21,7 @@ export enum SuppressOptions {
   TakeStdout = 't-stdout',
   TakeStderr = 't-stderr',
   CmdStdout = 'c-stdout',
-  CmdStderr = 'c-stderr'
+  CmdStderr = 'c-stderr',
 }
 
 /**
@@ -30,7 +30,7 @@ export enum SuppressOptions {
  */
 enum MetaSuppressOptions {
   Stdout = 'stdout',
-  Stderr = 'stderr'
+  Stderr = 'stderr',
 }
 
 /**
@@ -82,14 +82,14 @@ export interface CliArgs {
 export async function processArgs(): Promise<CliArgs> {
   // read package information
   const pgk = JSON.parse(
-    await fsp.readFile(join(__dirname, '..', '..', '..', 'package.json'), { encoding: 'utf8' })
+    await fsp.readFile(join(__dirname, '..', '..', '..', 'package.json'), { encoding: 'utf8' }),
   );
 
   // init argparse object
   const parser = new ArgumentParser({
     description: 'A Promise & TypeScript-based task runner.',
     version: pgk.version,
-    prog: 'take'
+    prog: 'take',
   });
 
   // set default here so using type? works as expected
@@ -102,34 +102,34 @@ export async function processArgs(): Promise<CliArgs> {
       help: 'Lists all the targets in the given Takefile',
       action: 'storeTrue',
       defaultValue: false,
-      dest: 'listTargets'
-    }
+      dest: 'listTargets',
+    },
   );
   parser.addArgument(
     ['--deps'],
     {
       help: 'Displays the dependency tree of a given target',
-      metavar: 'TARGET'
-    }
+      metavar: 'TARGET',
+    },
   );
   parser.addArgument(
     ['-c', '--cwd'],
     {
-      help: 'The directory to set as the working directory before searching and executing the Takefile.'
-    }
+      help: 'The directory to set as the working directory before searching and executing the Takefile.',
+    },
   );
   parser.addArgument(
     ['-d', '--directory'],
     {
-      help: 'The path to the directory containing a Takefile. Defaults to the current directory.'
-    }
+      help: 'The path to the directory containing a Takefile. Defaults to the current directory.',
+    },
   );
   parser.addArgument(
     ['-f', '--file'],
     {
       help: 'The full path to the Takefile. The file can have any name, as long as it exists. ' +
-        'If this argument is given along with the directory argument, this one takes priority.'
-    }
+        'If this argument is given along with the directory argument, this one takes priority.',
+    },
   );
   parser.addArgument(
     ['-t', '--trace'],
@@ -137,7 +137,7 @@ export async function processArgs(): Promise<CliArgs> {
       help: 'Whether to output a full trace upon errors.',
       action: 'storeTrue',
       defaultValue: false,
-    }
+    },
   );
   parser.addArgument(
     ['--suppress'],
@@ -153,24 +153,24 @@ export async function processArgs(): Promise<CliArgs> {
         'stderr: same as using both t-stderr and c-stderr.',
       action: 'append',
       defaultValue: [],
-      metavar: 'OUTPUT'
-    }
+      metavar: 'OUTPUT',
+    },
   );
   parser.addArgument(
     ['--emojis'],
     {
       help: 'Whether to force Take to use or disable emojis.',
       choices: ['on', 'off'],
-      metavar: '{on,off}'
-    }
+      metavar: '{on,off}',
+    },
   );
   parser.addArgument(
     'targets',
     {
       help: 'The targets to execute from the given Takefile. ' +
         'They will be executed in the order they are given.',
-      nargs: '*'
-    }
+      nargs: '*',
+    },
   );
 
   const args = parser.parseArgs();
@@ -183,15 +183,16 @@ export async function processArgs(): Promise<CliArgs> {
   // make sure only allowed options are given
   const suppressAllowed: string[] = [
     ...Object.keys(SuppressOptions).map(key => (SuppressOptions as any)[key]),
-    ...Object.keys(MetaSuppressOptions).map(key => (MetaSuppressOptions as any)[key])
+    ...Object.keys(MetaSuppressOptions).map(key => (MetaSuppressOptions as any)[key]),
   ];
   for (const sop of suppress) {
     if (!suppressAllowed.includes(sop)) {
       parser.error(
+        // tslint:disable-next-line:prefer-template
         'argument --suppress: Invalid option, allowed options:\n' +
         `[${suppressAllowed.join(', ')}]\n` +
         'multiple --suppress flags can be given, and each can have\n' +
-        'a list of comma-separated options'
+        'a list of comma-separated options',
       );
     }
   }

@@ -16,24 +16,24 @@ export interface ColorData {
 export const colors = {
   executes: {
     color: chalk.green,
-    desc: chalk`{green Green} {dim targets have an execute function}`
+    desc: chalk`{green Green} {dim targets have an execute function}`,
   } as ColorData,
   depsOnly: {
     color: chalk.blueBright,
-    desc: chalk`{blueBright Blue} {dim targets only have dependencies}`
+    desc: chalk`{blueBright Blue} {dim targets only have dependencies}`,
   } as ColorData,
   noops: {
     color: chalk.magenta,
-    desc: chalk`{magenta Magenta} {dim targets don't have an execute function or dependencies}`
+    desc: chalk`{magenta Magenta} {dim targets don't have an execute function or dependencies}`,
   } as ColorData,
   skipped: {
     color: chalk.dim,
-    desc: chalk`{dim Dimmed targets would be skipped}`
+    desc: chalk`{dim Dimmed targets would be skipped}`,
   } as ColorData,
   cyclic: {
     color: chalk.red,
-    desc: chalk`{red Red} {dim targets cause a cyclic dependency}`
-  } as ColorData
+    desc: chalk`{red Red} {dim targets cause a cyclic dependency}`,
+  } as ColorData,
 };
 
 /**

@@ -1,25 +1,26 @@
 const { join } = require('path');
 
-module.exports = (take) => {
+module.exports = take => {
   take.options.shell.printStdout = true;
   take.options.shell.printStderr = true;
 
   return {
     '': {
       desc: 'Clean & build',
-      deps: ['clean', 'build']
+      deps: ['clean', 'build'],
     },
     build: {
       desc: 'Builds Take',
+      deps: [':lint'],
       async execute() {
         await take.exec('tsc');
-      }
+      },
     },
     clean: {
       desc: 'Cleans up build output',
       async execute() {
         await take.exec('rm', '-rf', 'dist');
-      }
+      },
     },
     test: {
       desc: 'Tests Take',
@@ -30,7 +31,7 @@ module.exports = (take) => {
           './node_modules/mocha/bin/mocha',
           '-r', 'ts-node/register',
           '-r', 'source-map-support/register',
-          'test/**/*.spec.ts'
+          'test/**/*.spec.ts',
         );
       },
       children: {
@@ -42,42 +43,49 @@ module.exports = (take) => {
               'ts-node',
               [
                 '-P', '../tsconfig.json',
-                '../src/bin/cli.ts', ...args
+                '../src/bin/cli.ts', ...args,
               ],
               {
                 echo: false,
                 spawn: {
-                  cwd: join(__dirname, 'test')
-                }
-              }
+                  cwd: join(__dirname, 'test'),
+                },
+              },
             );
-          }
+          },
         },
         coverage: {
           async execute() {
             await take.exec('nyc report --reporter=text-lcov | coveralls');
-          }
-        }
-      }
+          },
+        },
+      },
     },
     lint: {
       desc: 'Lints the src/ folder',
       async execute() {
         await take.exec('tslint', '--project', '.');
         await take.exec('tslint', '--project', 'test');
-      }
+      },
+    },
+    fix: {
+      desc: 'Lints the src/ folder',
+      async execute() {
+        await take.exec('tslint', '--project', '.', '--fix');
+        await take.exec('tslint', '--project', 'test', '--fix');
+      },
     },
     publish: {
       desc: 'Publishes Take to npm',
       deps: [
-        ':', ':test'
+        ':', ':test',
       ],
       async execute() {
         await take.exec('yarn', 'publish');
         await take.exec('git', 'push', 'origin', '--tags');
         await take.exec('git', 'push');
         await take.exec('yarn', 'global', 'upgrade', '@luvies/take', '--latest');
-      }
-    }
+      },
+    },
   };
 };

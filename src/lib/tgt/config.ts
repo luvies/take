@@ -5,7 +5,7 @@ import { Namespace } from '../namespace';
  */
 export enum TargetMatch {
   Regex = 'regex',
-  Glob = 'glob'
+  Glob = 'glob',
 }
 
 /**

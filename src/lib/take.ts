@@ -33,7 +33,7 @@ export type TakefileEnv = Utils & {
    * The take module, in case Takefiles wish to write more advanced and custom
    * targets utilising multiple target layers or Takefiles.
    */
-  module: typeof TakeModule
+  module: typeof TakeModule,
 };
 
 /**
@@ -72,8 +72,7 @@ export class Take {
     // create a new Take instance
     let env!: Environment;
     const instance = await Take.newInstance(
-      path, fromDir,
-      (cenv) => {
+      path, fromDir, cenv => {
         // apply cli arguments to config
         cenv.config.suppress = args.suppress;
         cenv.config.emojis = args.emojis;
@@ -83,7 +82,7 @@ export class Take {
 
         // store the env here as well so we can use it
         env = cenv;
-      }
+      },
     );
 
     // check meta options before trying to execute tasks
@@ -119,7 +118,7 @@ export class Take {
           time = `${Math.round(diffSecs / 60)}m ${diffSecs % 60}`;
         }
         env.utils.log(chalk.dim(
-          `${env.utils.useEmoji('✨  ')}Target executed in ${time}.${diffNanoSecs.toString().slice(0, 2)}s`
+          `${env.utils.useEmoji('✨  ')}Target executed in ${time}.${diffNanoSecs.toString().slice(0, 2)}s`,
         ));
       }
     }
@@ -135,8 +134,8 @@ export class Take {
    */
   public static async newInstance(
     path?: string,
-    fromDir: boolean = true,
-    envSetup?: (env: Environment) => void
+    fromDir = true,
+    envSetup?: (env: Environment) => void,
   ): Promise<Take> {
     // set the working directory
     path = path || process.cwd();
@@ -167,8 +166,8 @@ export class Take {
       {
         options: env.options,
         fsp,
-        module: TakeModule
-      }
+        module: TakeModule,
+      },
     );
   }
 
@@ -188,7 +187,7 @@ export class Take {
     /**
      * The runner that can execute the targets.
      */
-    public runner: Runner
+    public runner: Runner,
   ) { }
 
   /**
@@ -219,7 +218,7 @@ export class Take {
         // they are extracted in priority order
         ...Object.keys(targets.exact).map(key => targets.exact[key]),
         ...targets.regex.map(re => re.target),
-        ...targets.glob.map(gb => gb.target)
+        ...targets.glob.map(gb => gb.target),
       ]) {
         // exclude root node
         if (!target.name) {
@@ -229,7 +228,7 @@ export class Take {
         // build node
         const node: TreeNode = {
           text: formatTargetName(target.name, target),
-          extra: target.desc
+          extra: target.desc,
         };
 
         // build children
@@ -248,14 +247,14 @@ export class Take {
       tree = {
         text: formatTargetName(RootTargetName, this.targets.exact[RootTargetIndex]),
         extra: this.targets.exact[RootTargetIndex].desc,
-        children: tree
+        children: tree,
       };
     }
 
     // return formatted tree
     return formatTree(tree, {
       guideFormat: chalk.dim,
-      extraSplit: chalk.dim(' | ')
+      extraSplit: chalk.dim(' | '),
     });
   }
 
@@ -281,7 +280,7 @@ export class Take {
       const treeNode: TreeNode = {
         text: depName,
         extra: depNode.execData.target.desc,
-        children: []
+        children: [],
       };
 
       // build children
@@ -296,7 +295,7 @@ export class Take {
     const [depTree] = this.runner.buildDependencyTree(ns);
     return formatTree(processNode(depTree), {
       guideFormat: chalk.dim,
-      extraSplit: chalk.dim(' | ')
+      extraSplit: chalk.dim(' | '),
     });
   }
 }

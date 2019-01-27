@@ -47,7 +47,7 @@ export class Loader {
   }
 
   private constructor(
-    private path: string
+    private path: string,
   ) { }
 
   /**

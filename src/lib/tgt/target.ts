@@ -40,13 +40,13 @@ export class Target {
 
           regex.push({
             rule: re,
-            target: getTarget(name)
+            target: getTarget(name),
           });
           break;
         case TargetMatch.Glob:
           glob.push({
             rule: name,
-            target: getTarget(name)
+            target: getTarget(name),
           });
           break;
         default:
@@ -59,7 +59,7 @@ export class Target {
     return {
       exact,
       regex,
-      glob
+      glob,
     };
   }
 
@@ -89,7 +89,7 @@ export class Target {
     public name: string,
     private config: TargetConfig,
     private env: Environment,
-    path?: Namespace
+    path?: Namespace,
   ) {
     // make sure we have a path
     this.path = path = path || env.root;
@@ -134,7 +134,7 @@ export class Target {
     // convert file options
     this.files = {
       input: [],
-      output: []
+      output: [],
     };
     if (config.files) {
       if (config.files.input) {
@@ -272,7 +272,7 @@ export class Target {
       // create the run data
       this.config.run = {
         ns: this.path,
-        match
+        match,
       };
 
       // await regardless, since void results can be awaited

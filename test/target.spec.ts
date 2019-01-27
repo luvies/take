@@ -23,7 +23,7 @@ describe('Target', function() {
 
     it('should process a single empty top-level task', function() {
       const { exact: tasks } = Target.processTargetConfig({
-        'target1': {}
+        'target1': {},
       }, env);
       expect(tasks).have.key('target1');
       const task = tasks['target1'];

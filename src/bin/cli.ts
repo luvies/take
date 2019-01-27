@@ -12,7 +12,7 @@ function logError(env?: Environment, ...messages: any[]) {
 
 // bootstrap app
 const clienv: CliEnv = {
-  trace: false
+  trace: false,
 };
 Take.runFromCli(clienv).catch(err => {
   // to make the exit code slightly useful, exit codes of 1 mean

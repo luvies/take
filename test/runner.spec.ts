@@ -10,7 +10,7 @@ describe('Runner', function() {
   let runner: Runner;
   let executions: Array<{
     target: string,
-    args: string[]
+    args: string[],
   }>;
 
   // helper methods
@@ -26,7 +26,7 @@ describe('Runner', function() {
     runner = new Runner(env, Target.processTargetConfig(conf, env));
   });
 
-  async function exec(ns: string = '', args?: string[]) {
+  async function exec(ns = '', args?: string[]) {
     let argString = '';
     if (typeof args !== 'undefined') {
       argString = `[${args.join(',')}]`;
@@ -45,7 +45,7 @@ describe('Runner', function() {
       await exec();
 
       expect(executions).to.be.eql([
-        { target: '', args: [] }
+        { target: '', args: [] },
       ]);
     });
 
@@ -53,7 +53,7 @@ describe('Runner', function() {
       await exec('1');
 
       expect(executions).to.be.eql([
-        { target: '1', args: [] }
+        { target: '1', args: [] },
       ]);
     });
 
@@ -61,7 +61,7 @@ describe('Runner', function() {
       await exec(':1:2');
 
       expect(executions).to.be.eql([
-        { target: '2', args: [] }
+        { target: '2', args: [] },
       ]);
     });
 
@@ -70,7 +70,7 @@ describe('Runner', function() {
 
       expect(executions).to.be.eql([
         { target: '1', args: [] },
-        { target: '10', args: [] }
+        { target: '10', args: [] },
       ]);
     });
 
@@ -79,7 +79,7 @@ describe('Runner', function() {
 
       expect(executions).to.be.eql([
         { target: '1', args: [] },
-        { target: '18', args: [] }
+        { target: '18', args: [] },
       ]);
     });
 
@@ -89,7 +89,7 @@ describe('Runner', function() {
       expect(executions).to.be.eql([
         { target: '1', args: [] },
         { target: '2', args: [] },
-        { target: '19', args: [] }
+        { target: '19', args: [] },
       ]);
     });
 
@@ -98,7 +98,7 @@ describe('Runner', function() {
 
       expect(executions).to.be.eql([
         { target: '1', args: [] },
-        { target: '20', args: [] }
+        { target: '20', args: [] },
       ]);
     });
 
@@ -108,7 +108,7 @@ describe('Runner', function() {
       expect(executions).to.be.eql([
         { target: '1', args: [] },
         { target: '10', args: [] },
-        { target: '21', args: [] }
+        { target: '21', args: [] },
       ]);
     });
   });

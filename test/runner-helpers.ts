@@ -11,7 +11,7 @@ export function runnerSample(execute: (target: any) => (...args: string[]) => vo
           children: {
             5: {
               deps: '^:^',
-              execute: execute(5)
+              execute: execute(5),
             },
             6: {
               deps: '7',
@@ -20,64 +20,64 @@ export function runnerSample(execute: (target: any) => (...args: string[]) => vo
                 7: { execute: execute(7) },
                 8: {
                   deps: '^:7',
-                  execute: execute(8)
-                }
-              }
+                  execute: execute(8),
+                },
+              },
             },
             9: {
               deps: '^:^:2',
-              execute: execute(9)
-            }
-          }
-        }
-      }
+              execute: execute(9),
+            },
+          },
+        },
+      },
     },
     10: {
       deps: ':1',
-      execute: execute(10)
+      execute: execute(10),
     },
     11: {
       deps: [':4'],
-      execute: execute(11)
+      execute: execute(11),
     },
     12: {
       deps: [':3'],
-      execute: execute(12)
+      execute: execute(12),
     },
     13: {
       deps: '10',
-      execute: execute(13)
+      execute: execute(13),
     },
     14: {
       deps: ':3',
-      execute: execute(14)
+      execute: execute(14),
     },
     15: {
       deps: ':16',
-      execute: execute(15)
+      execute: execute(15),
     },
     16: {
       deps: ':17',
-      execute: execute(16)
+      execute: execute(16),
     },
     17: {
-      execute: execute(17)
+      execute: execute(17),
     },
     18: {
       deps: [':1'],
-      execute: execute(18)
+      execute: execute(18),
     },
     19: {
       deps: [':1', ':1:2'],
-      execute: execute(19)
+      execute: execute(19),
     },
     20: {
       deps: [':1', ':1'],
-      execute: execute(20)
+      execute: execute(20),
     },
     21: {
       deps: [':1', ':10'],
-      execute: execute(21)
+      execute: execute(21),
     },
   };
 }

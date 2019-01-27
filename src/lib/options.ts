@@ -42,8 +42,8 @@ const DefaultShellOptions = {
    * The default options to pass into spawn.
    */
   spawn: {
-    shell: true
-  } as SpawnOptions
+    shell: true,
+  } as SpawnOptions,
 };
 
 /**
@@ -111,6 +111,6 @@ export function DefaultOptions(): Options {
     namespaceParent: '^',
     shell: merge({}, DefaultShellOptions),
     emojis: !!process.stdout.isTTY && process.platform === 'darwin',
-    allDepsAbsolute: false
+    allDepsAbsolute: false,
   };
 }

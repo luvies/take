@@ -18,7 +18,7 @@ export class Utils {
 
   public constructor(
     // tslint:disable-next-line:variable-name
-    private __env: Environment
+    private __env: Environment,
   ) { }
 
   /**
@@ -130,7 +130,7 @@ export class Utils {
     spawnOpts.stdio = [
       'inherit',
       'pipe',
-      'pipe'
+      'pipe',
     ];
 
     // enable stdout if we were configured to
