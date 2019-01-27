@@ -143,7 +143,7 @@ export class Target {
             this.files.input = [name];
             break;
           case 'string':
-            this.files.input = [config.files.input as string];
+            this.files.input = [config.files.input];
             break;
           case 'object':
             if (Array.isArray(config.files.input)) {
@@ -160,7 +160,7 @@ export class Target {
             this.files.output = [name];
             break;
           case 'string':
-            this.files.output = [config.files.output as string];
+            this.files.output = [config.files.output];
             break;
           case 'object':
             if (Array.isArray(config.files.output)) {
@@ -180,7 +180,7 @@ export class Target {
         this.directories = [name];
         break;
       case 'string':
-        this.directories = [config.directories as string];
+        this.directories = [config.directories];
         break;
       case 'object':
         if (Array.isArray(config.directories)) {
