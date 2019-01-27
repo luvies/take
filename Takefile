@@ -24,6 +24,7 @@ module.exports = take => {
     },
     test: {
       desc: 'Tests Take',
+      deps: [':lint'],
       async execute() {
         // use ts-node to allow proper source mapping and not require building
         await take.exec(
