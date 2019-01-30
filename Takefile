@@ -13,7 +13,7 @@ module.exports = take => {
       desc: 'Builds Take',
       deps: [':lint'],
       async execute() {
-        await take.exec('tsc');
+        await take.exec('./node_modules/.bin/ttsc');
       },
     },
     clean: {
@@ -65,15 +65,15 @@ module.exports = take => {
     lint: {
       desc: 'Lints the src/ folder',
       async execute() {
-        await take.exec('tslint', '--project', '.');
-        await take.exec('tslint', '--project', 'test');
+        await take.exec('./node_modules/.bin/tslint', '--project', '.');
+        await take.exec('./node_modules/.bin/tslint', '--project', 'test');
       },
     },
     fix: {
       desc: 'Lints the src/ folder',
       async execute() {
-        await take.exec('tslint', '--project', '.', '--fix');
-        await take.exec('tslint', '--project', 'test', '--fix');
+        await take.exec('./node_modules/.bin/tslint', '--project', '.', '--fix');
+        await take.exec('./node_modules/.bin/tslint', '--project', 'test', '--fix');
       },
     },
     publish: {
