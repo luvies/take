@@ -1,19 +1,19 @@
 import chalk from 'chalk';
 import { formatTree, TreeNode } from 'format-tree';
 import * as TakeModule from '.';
-import { CliArgs, CliEnv, processArgs, SuppressOptions } from './cli/args';
-import { colors, formatTargetName, printColorInfo, printTargetColorInfo } from './cli/output';
-import { Environment } from './environment';
-import { Loader } from './loader';
-import { Namespace } from './namespace';
-import { DefaultOptions, Options } from './options';
-import { DependencyNode, Runner } from './runner';
-import * as fsp from './shims/fsp';
-import { TargetBatchTree } from './tgt/batch';
-import { TargetConfigBatch } from './tgt/config';
-import { RootTargetIndex, RootTargetName } from './tgt/const';
-import { Target } from './tgt/target';
-import { Utils } from './utils';
+import { CliArgs, CliEnv, processArgs, SuppressOptions } from './cli/args.ts';
+import { colors, formatTargetName, printColorInfo, printTargetColorInfo } from './cli/output.ts';
+import { Environment } from './environment.ts';
+import { Loader } from './loader.ts';
+import { Namespace } from './namespace.ts';
+import { DefaultOptions, Options } from './options.ts';
+import { DependencyNode, Runner } from './runner.ts';
+import * as fsp from './shims/fsp.ts';
+import { TargetBatchTree } from './tgt/batch.ts';
+import { TargetConfigBatch } from './tgt/config.ts';
+import { RootTargetIndex, RootTargetName } from './tgt/const.ts';
+import { Target } from './tgt/target.ts';
+import { Utils } from './utils.ts';
 
 /**
  * The spec for the object that is passed into the Takefile exported function.

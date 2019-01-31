@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { DefaultOptions, Environment, Runner, Target, TargetConfigBatch } from '../src/lib';
+import { DefaultOptions, Environment, Runner, Target, TargetConfigBatch } from '../prebuild/lib';
 import { runnerSample } from './runner-helpers';
 
 describe('Runner', function() {

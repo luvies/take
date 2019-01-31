@@ -1,4 +1,4 @@
-import { TargetBatchTree } from '../src/lib';
+import { TargetBatchTree } from '../prebuild/lib';
 
 export function sampleConfig(): TargetBatchTree {
   return {

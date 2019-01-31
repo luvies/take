@@ -21,6 +21,11 @@
     "outDir": "./dist",
     "alwaysStrict": true,
     "baseUrl": ".",
+    "plugins": [
+      {
+        "name": "deno_ls_plugin"
+      },
+    ],
   },
   "include": [
     "src/**/*.ts"

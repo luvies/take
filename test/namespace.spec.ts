@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { DefaultOptions, Environment, Namespace } from '../src/lib';
+import { DefaultOptions, Environment, Namespace } from '../prebuild/lib';
 
 describe('Namespace', function() {
   let env: Environment;

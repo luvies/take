@@ -11,20 +11,30 @@ module.exports = take => {
     },
     build: {
       desc: 'Builds Take',
-      deps: [':lint'],
+      deps: [':lint', 'prebuild'],
       async execute() {
-        await take.exec('./node_modules/.bin/ttsc');
+        await take.exec('./node_modules/.bin/tsc --project ./tsconfig.build.json');
+      },
+      children: {
+        prebuild: {
+          desc: 'Prebuilds the source tree to prevent tsc errors',
+          async execute() {
+            take.log('')
+            await take.exec('node ./scripts/prebuild.js');
+          },
+        },
       },
     },
     clean: {
       desc: 'Cleans up build output',
       async execute() {
-        await take.exec('rm', '-rf', 'dist');
+        await take.exec('rm', '-rf', 'dist/*');
+        await take.exec('rm', '-rf', 'prebuild/*');
       },
     },
     test: {
       desc: 'Tests Take',
-      deps: [':lint'],
+      deps: [':lint', ':build:prebuild'],
       async execute() {
         // use ts-node to allow proper source mapping and not require building
         await take.exec(
@@ -38,13 +48,14 @@ module.exports = take => {
       children: {
         'run-local': {
           desc: 'Runs the local version of take using ts-node and the given arguments',
+          deps: [':build:prebuild'],
           async execute(...args) {
             console.log('--- execution output ---');
             await take.shell(
               'ts-node',
               [
-                '-P', '../tsconfig.json',
-                '../src/bin/cli.ts', ...args,
+                '-P', '../tsconfig.build.json',
+                '../prebuild/bin/cli.ts', ...args,
               ],
               {
                 echo: false,
@@ -56,6 +67,7 @@ module.exports = take => {
           },
         },
         coverage: {
+          desc: 'Pushes the latest coverage report to coveralls',
           async execute() {
             await take.exec('nyc report --reporter=text-lcov | coveralls');
           },
