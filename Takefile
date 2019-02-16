@@ -19,8 +19,9 @@ module.exports = take => {
         prebuild: {
           desc: 'Prebuilds the source tree to prevent tsc errors',
           async execute() {
-            take.log('')
-            await take.exec('node ./scripts/prebuild.js');
+            await take.exec(
+              'deno --allow-read --allow-write https://gist.githubusercontent.com/luvies/d85fc46c5b4e255b845743082bdbc3c0/raw/5771e212331a153ee13b44dc605301a29969affc/node_prebuild.ts --in src --out prebuild',
+            );
           },
         },
       },
