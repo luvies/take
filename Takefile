@@ -20,7 +20,7 @@ module.exports = take => {
           desc: 'Prebuilds the source tree to prevent tsc errors',
           async execute() {
             await take.exec(
-              'deno --allow-read --allow-write https://gist.githubusercontent.com/luvies/d85fc46c5b4e255b845743082bdbc3c0/raw/5771e212331a153ee13b44dc605301a29969affc/node_prebuild.ts --in src --out prebuild',
+              'deno --allow-read --allow-write https://gist.githubusercontent.com/luvies/d85fc46c5b4e255b845743082bdbc3c0/raw/fcad5914596c75f72868500c87493f5cc569629e/node_prebuild.ts --in src --out prebuild',
             );
           },
         },
